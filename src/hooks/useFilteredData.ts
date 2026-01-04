@@ -52,7 +52,9 @@ export function useFilteredData(
     }
 
     if (selectedState) {
-      filteredResorts = filteredResorts.filter((r) => r.state === selectedState);
+      filteredResorts = filteredResorts.filter(
+        (r) => r.state === selectedState
+      );
     }
 
     if (passNetworks.size > 0) {
@@ -86,7 +88,9 @@ export function useFilteredData(
     }
 
     if (selectedState) {
-      filteredClinics = filteredClinics.filter((c) => c.state === selectedState);
+      filteredClinics = filteredClinics.filter(
+        (c) => c.state === selectedState
+      );
     }
 
     if (careTypes.size > 0 && !careTypes.has("dialysis")) {
@@ -115,7 +119,9 @@ export function useFilteredData(
     }
 
     if (selectedState) {
-      filteredHospitals = filteredHospitals.filter((h) => h.state === selectedState);
+      filteredHospitals = filteredHospitals.filter(
+        (h) => h.state === selectedState
+      );
     }
 
     if (careTypes.size > 0 && !careTypes.has("hospital")) {

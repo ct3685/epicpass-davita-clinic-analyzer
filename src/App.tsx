@@ -4,12 +4,24 @@ import { useSettingsStore } from "@/stores/settingsStore";
 import { useSelectionStore } from "@/stores/selectionStore";
 import { useLocationStore } from "@/stores/locationStore";
 import { Header, Sidebar, SettingsDrawer } from "@/components/layout";
-import { MapView, ResortMarker, ClinicMarker, HospitalMarker, UserLocationMarker } from "@/components/map";
+import {
+  MapView,
+  ResortMarker,
+  ClinicMarker,
+  HospitalMarker,
+  UserLocationMarker,
+} from "@/components/map";
 import { ResortCard, ClinicCard, HospitalCard } from "@/components/cards";
 import { Spinner } from "@/components/ui";
 import { useData, useFilteredData } from "@/hooks";
 import { haversine } from "@/utils/haversine";
-import type { Resort, Clinic, Hospital, ClinicWithDistance, ResortWithDistance } from "@/types";
+import type {
+  Resort,
+  Clinic,
+  Hospital,
+  ClinicWithDistance,
+  ResortWithDistance,
+} from "@/types";
 
 function App() {
   const { colorTheme, darkMode } = useSettingsStore();
@@ -85,7 +97,10 @@ function App() {
       return clinics
         .map((c) => ({
           ...c,
-          distance: haversine({ lat: resort.lat, lon: resort.lon }, { lat: c.lat, lon: c.lon }),
+          distance: haversine(
+            { lat: resort.lat, lon: resort.lon },
+            { lat: c.lat, lon: c.lon }
+          ),
         }))
         .sort((a, b) => a.distance - b.distance)
         .slice(0, limit);
@@ -99,7 +114,10 @@ function App() {
       return resorts
         .map((r) => ({
           ...r,
-          distance: haversine({ lat: clinic.lat, lon: clinic.lon }, { lat: r.lat, lon: r.lon }),
+          distance: haversine(
+            { lat: clinic.lat, lon: clinic.lon },
+            { lat: r.lat, lon: r.lon }
+          ),
         }))
         .sort((a, b) => a.distance - b.distance)
         .slice(0, limit);
@@ -113,7 +131,10 @@ function App() {
       return resorts
         .map((r) => ({
           ...r,
-          distance: haversine({ lat: hospital.lat, lon: hospital.lon }, { lat: r.lat, lon: r.lon }),
+          distance: haversine(
+            { lat: hospital.lat, lon: hospital.lon },
+            { lat: r.lat, lon: r.lon }
+          ),
         }))
         .sort((a, b) => a.distance - b.distance)
         .slice(0, limit);
@@ -122,21 +143,24 @@ function App() {
   );
 
   // Handle directions click
-  const handleDirections = useCallback((
-    fromLat: number,
-    fromLon: number,
-    toLat: number,
-    toLon: number,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _fromName: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _toName: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _distance: number
-  ) => {
-    const url = `https://www.google.com/maps/dir/${fromLat},${fromLon}/${toLat},${toLon}`;
-    window.open(url, "_blank");
-  }, []);
+  const handleDirections = useCallback(
+    (
+      fromLat: number,
+      fromLon: number,
+      toLat: number,
+      toLon: number,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _fromName: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _toName: string,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      _distance: number
+    ) => {
+      const url = `https://www.google.com/maps/dir/${fromLat},${fromLon}/${toLat},${toLon}`;
+      window.open(url, "_blank");
+    },
+    []
+  );
 
   // Render card list based on mode
   const renderCards = () => {
@@ -220,7 +244,6 @@ function App() {
     }
   };
 
-
   return (
     <div className="min-h-screen bg-bg-primary text-text-primary overflow-hidden">
       {/* Settings Drawer */}
@@ -250,7 +273,9 @@ function App() {
                   resort={resort}
                   isSelected={selectedId === resort.id}
                   userLocation={userLocation}
-                  onClick={() => handleMapSelect(resort.id, resort.lat, resort.lon)}
+                  onClick={() =>
+                    handleMapSelect(resort.id, resort.lat, resort.lon)
+                  }
                 />
               ))}
 
@@ -262,7 +287,9 @@ function App() {
                   clinic={clinic}
                   isSelected={selectedId === clinic.ccn}
                   userLocation={userLocation}
-                  onClick={() => handleMapSelect(clinic.ccn, clinic.lat, clinic.lon)}
+                  onClick={() =>
+                    handleMapSelect(clinic.ccn, clinic.lat, clinic.lon)
+                  }
                 />
               ))}
 
@@ -273,7 +300,9 @@ function App() {
                   key={hospital.id}
                   hospital={hospital}
                   isSelected={selectedId === hospital.id}
-                  onClick={() => handleMapSelect(hospital.id, hospital.lat, hospital.lon)}
+                  onClick={() =>
+                    handleMapSelect(hospital.id, hospital.lat, hospital.lon)
+                  }
                 />
               ))}
           </MapView>

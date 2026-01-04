@@ -39,7 +39,7 @@ export function useData(): DataState {
 
         const rawResorts = await resortsRes.json();
         const rawClinics = await clinicsRes.json();
-        
+
         // Normalize resort data (add missing fields for legacy data)
         const resorts: Resort[] = rawResorts.map((r: Partial<Resort>) => ({
           ...r,
@@ -47,7 +47,7 @@ export function useData(): DataState {
           passNetwork: r.passNetwork || "epic",
           region: r.region || "rockies",
         }));
-        
+
         // Normalize clinic data (add missing provider for legacy DaVita-only data)
         const clinics: Clinic[] = rawClinics.map((c: Partial<Clinic>) => ({
           ...c,
@@ -89,4 +89,3 @@ export function useData(): DataState {
 }
 
 export default useData;
-

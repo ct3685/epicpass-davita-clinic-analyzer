@@ -23,8 +23,10 @@ const DEFAULT_CENTER: [number, number] = [39.8283, -98.5795];
 const DEFAULT_ZOOM = 4;
 
 // Tile layer URLs
-const DARK_TILES = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
-const LIGHT_TILES = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
+const DARK_TILES =
+  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const LIGHT_TILES =
+  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const ATTRIBUTION = "© OpenStreetMap, © CARTO";
 
 interface MapViewProps {
@@ -75,7 +77,11 @@ function TileLayerSync() {
 /**
  * Component to handle map ready callback
  */
-function MapReadyHandler({ onMapReady }: { onMapReady?: (map: LeafletMap) => void }) {
+function MapReadyHandler({
+  onMapReady,
+}: {
+  onMapReady?: (map: LeafletMap) => void;
+}) {
   const map = useMap();
 
   useEffect(() => {
@@ -108,4 +114,3 @@ export function MapView({
 }
 
 export { DEFAULT_CENTER, DEFAULT_ZOOM };
-

@@ -6,7 +6,10 @@ import { formatDistance } from "@/utils/formatters";
 
 // ============ Custom Icon Creation ============
 
-function createDivIcon(html: string, size: [number, number] = [32, 32]): L.DivIcon {
+function createDivIcon(
+  html: string,
+  size: [number, number] = [32, 32]
+): L.DivIcon {
   return L.divIcon({
     html,
     className: "",
@@ -212,4 +215,3 @@ export function UserLocationMarker({ location }: UserLocationMarkerProps) {
     </Marker>
   );
 }
-

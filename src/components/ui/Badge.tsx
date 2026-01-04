@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 
-type BadgeVariant = "default" | "success" | "warning" | "danger" | "info" | "outline";
+type BadgeVariant =
+  | "default"
+  | "success"
+  | "warning"
+  | "danger"
+  | "info"
+  | "outline";
 
 interface BadgeProps {
   variant?: BadgeVariant;
@@ -10,14 +16,21 @@ interface BadgeProps {
 
 const variantStyles: Record<BadgeVariant, string> = {
   default: "bg-bg-tertiary text-text-muted",
-  success: "bg-accent-success/20 text-accent-success border border-accent-success/30",
-  warning: "bg-accent-warning/20 text-accent-warning border border-accent-warning/30",
-  danger: "bg-accent-danger/20 text-accent-danger border border-accent-danger/30",
+  success:
+    "bg-accent-success/20 text-accent-success border border-accent-success/30",
+  warning:
+    "bg-accent-warning/20 text-accent-warning border border-accent-warning/30",
+  danger:
+    "bg-accent-danger/20 text-accent-danger border border-accent-danger/30",
   info: "bg-accent-clinic/20 text-accent-clinic border border-accent-clinic/30",
   outline: "bg-transparent border border-border text-text-secondary",
 };
 
-export function Badge({ variant = "default", children, className = "" }: BadgeProps) {
+export function Badge({
+  variant = "default",
+  children,
+  className = "",
+}: BadgeProps) {
   return (
     <span
       className={`
@@ -43,9 +56,14 @@ interface DistanceBadgeProps {
   className?: string;
 }
 
-export function DistanceBadge({ miles, icon = "📍", className = "" }: DistanceBadgeProps) {
-  const variant: BadgeVariant = miles < 25 ? "success" : miles < 75 ? "warning" : "danger";
-  
+export function DistanceBadge({
+  miles,
+  icon = "📍",
+  className = "",
+}: DistanceBadgeProps) {
+  const variant: BadgeVariant =
+    miles < 25 ? "success" : miles < 75 ? "warning" : "danger";
+
   return (
     <Badge variant={variant} className={className}>
       {icon} {miles.toFixed(1)} mi
@@ -69,8 +87,11 @@ const passColors: Record<string, string> = {
 };
 
 export function PassBadge({ pass, className = "" }: PassBadgeProps) {
-  const label = pass === "both" ? "Epic + Ikon" : pass.charAt(0).toUpperCase() + pass.slice(1);
-  
+  const label =
+    pass === "both"
+      ? "Epic + Ikon"
+      : pass.charAt(0).toUpperCase() + pass.slice(1);
+
   return (
     <span
       className={`
@@ -102,13 +123,19 @@ const providerColors: Record<string, string> = {
   other: "bg-bg-tertiary text-text-muted",
 };
 
-export function ProviderBadge({ provider, className = "" }: ProviderBadgeProps) {
+export function ProviderBadge({
+  provider,
+  className = "",
+}: ProviderBadgeProps) {
   // Handle undefined/missing provider - default to DaVita for existing data
   const safeProvider = provider || "davita";
-  const label = safeProvider === "davita" ? "DaVita" : 
-                safeProvider === "fresenius" ? "Fresenius" :
-                safeProvider.charAt(0).toUpperCase() + safeProvider.slice(1);
-  
+  const label =
+    safeProvider === "davita"
+      ? "DaVita"
+      : safeProvider === "fresenius"
+      ? "Fresenius"
+      : safeProvider.charAt(0).toUpperCase() + safeProvider.slice(1);
+
   return (
     <span
       className={`
@@ -124,4 +151,3 @@ export function ProviderBadge({ provider, className = "" }: ProviderBadgeProps) 
     </span>
   );
 }
-
