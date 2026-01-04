@@ -143,14 +143,14 @@ Each theme has light and dark variants. Always maintain this theming system.
 
 ### Naming Conventions
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Components | PascalCase | `ResortCard`, `SettingsDrawer` |
-| Hooks | camelCase with `use` prefix | `useResorts`, `useGeolocation` |
-| Stores | camelCase with `Store` suffix | `filterStore`, `settingsStore` |
-| Files | kebab-case | `resort-card.tsx`, `use-resorts.ts` |
-| CSS Variables | `--category-name` | `--accent-primary`, `--bg-card` |
-| Test IDs | kebab-case | `data-testid="resort-card"` |
+| Type          | Convention                    | Example                             |
+| ------------- | ----------------------------- | ----------------------------------- |
+| Components    | PascalCase                    | `ResortCard`, `SettingsDrawer`      |
+| Hooks         | camelCase with `use` prefix   | `useResorts`, `useGeolocation`      |
+| Stores        | camelCase with `Store` suffix | `filterStore`, `settingsStore`      |
+| Files         | kebab-case                    | `resort-card.tsx`, `use-resorts.ts` |
+| CSS Variables | `--category-name`             | `--accent-primary`, `--bg-card`     |
+| Test IDs      | kebab-case                    | `data-testid="resort-card"`         |
 
 ### Data Flow
 
@@ -167,16 +167,17 @@ Python Scripts → JSON Files → React App → Zustand Stores → Components
 
 ### Key Stores
 
-| Store | Purpose |
-|-------|---------|
-| `filterStore` | Search query, state filter, distance, pass/care type filters |
-| `selectionStore` | Current mode, selected/expanded items |
-| `locationStore` | User geolocation state |
-| `settingsStore` | Theme, dark mode, units, defaults, drawer state |
+| Store            | Purpose                                                      |
+| ---------------- | ------------------------------------------------------------ |
+| `filterStore`    | Search query, state filter, distance, pass/care type filters |
+| `selectionStore` | Current mode, selected/expanded items                        |
+| `locationStore`  | User geolocation state                                       |
+| `settingsStore`  | Theme, dark mode, units, defaults, drawer state              |
 
 ### Settings Drawer
 
 All user preferences live in the Settings Drawer (gear icon in header):
+
 - Theme selection (Rose/Alpine/Glacier)
 - Mode (Dark/Light/Auto)
 - Distance units (Miles/Kilometers)
@@ -194,6 +195,7 @@ refactor: code refactoring
 ```
 
 Always run before committing:
+
 ```bash
 npm run lint && npm run typecheck && npm run build
 ```

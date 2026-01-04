@@ -58,4 +58,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mobile-responsive design with FAB
 - Share functionality (Web Share API + clipboard fallback)
 - Google Analytics 4 integration
-
