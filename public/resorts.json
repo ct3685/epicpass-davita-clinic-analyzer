@@ -1,224 +1,623 @@
 [
   {
+    "id": "Afton Alps|MN",
     "name": "Afton Alps",
     "state": "MN",
     "lat": 44.853188,
-    "lon": -92.784803
+    "lon": -92.784803,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Alpine Valley|OH",
     "name": "Alpine Valley",
     "state": "OH",
     "lat": 41.528392,
-    "lon": -81.261449
+    "lon": -81.261449,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Alta|UT",
+    "name": "Alta",
+    "state": "UT",
+    "lat": 40.590404,
+    "lon": -111.635216,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Aspen Snowmass|CO",
+    "name": "Aspen Snowmass",
+    "state": "CO",
+    "lat": 39.185718,
+    "lon": -106.944852,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Attitash|NH",
     "name": "Attitash",
     "state": "NH",
     "lat": 44.07421,
-    "lon": -71.244665
+    "lon": -71.244665,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Beaver Creek|CO",
     "name": "Beaver Creek",
     "state": "CO",
     "lat": 39.604879,
-    "lon": -106.515002
+    "lon": -106.515002,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Big Bear Mountain Resort|CA",
+    "name": "Big Bear Mountain Resort",
+    "state": "CA",
+    "lat": 34.2364,
+    "lon": -116.8906,
+    "passNetwork": "ikon",
+    "region": "west"
+  },
+  {
+    "id": "Big Boulder|PA",
     "name": "Big Boulder",
     "state": "PA",
     "lat": 41.046652,
-    "lon": -75.599762
+    "lon": -75.599762,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Big Sky|MT",
+    "name": "Big Sky",
+    "state": "MT",
+    "lat": 45.258964,
+    "lon": -111.308725,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Blue Mountain|PA",
+    "name": "Blue Mountain",
+    "state": "PA",
+    "lat": 40.9498,
+    "lon": -75.5157,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Boston Mills|OH",
     "name": "Boston Mills",
     "state": "OH",
     "lat": 41.263692,
-    "lon": -81.564326
+    "lon": -81.564326,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Boyne Highlands|MI",
+    "name": "Boyne Highlands",
+    "state": "MI",
+    "lat": 45.47703,
+    "lon": -84.945421,
+    "passNetwork": "ikon",
+    "region": "midwest"
+  },
+  {
+    "id": "Boyne Mountain|MI",
+    "name": "Boyne Mountain",
+    "state": "MI",
+    "lat": 45.15862,
+    "lon": -84.938936,
+    "passNetwork": "ikon",
+    "region": "midwest"
+  },
+  {
+    "id": "Brandywine|OH",
     "name": "Brandywine",
     "state": "OH",
     "lat": 40.865613,
-    "lon": -82.939075
+    "lon": -82.939075,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Breckenridge|CO",
     "name": "Breckenridge",
     "state": "CO",
     "lat": 39.482912,
-    "lon": -106.046549
+    "lon": -106.046549,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Brighton|UT",
+    "name": "Brighton",
+    "state": "UT",
+    "lat": 40.601822,
+    "lon": -111.583314,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Copper Mountain|CO",
+    "name": "Copper Mountain",
+    "state": "CO",
+    "lat": 39.478088,
+    "lon": -106.162889,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Crested Butte|CO",
     "name": "Crested Butte",
     "state": "CO",
     "lat": 38.86982,
-    "lon": -106.984043
+    "lon": -106.984043,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Crotched|NH",
     "name": "Crotched",
     "state": "NH",
     "lat": 42.998291,
-    "lon": -71.873907
+    "lon": -71.873907,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Crystal Mountain|WA",
+    "name": "Crystal Mountain",
+    "state": "WA",
+    "lat": 46.932736,
+    "lon": -121.487729,
+    "passNetwork": "ikon",
+    "region": "pacific-northwest"
+  },
+  {
+    "id": "Deer Valley|UT",
+    "name": "Deer Valley",
+    "state": "UT",
+    "lat": 40.638231,
+    "lon": -111.477062,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Eldora Mountain Resort|CO",
+    "name": "Eldora Mountain Resort",
+    "state": "CO",
+    "lat": 39.9372,
+    "lon": -105.5827,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Heavenly|CA/NV",
     "name": "Heavenly",
     "state": "CA/NV",
     "lat": 38.940452,
-    "lon": -119.897421
+    "lon": -119.897421,
+    "passNetwork": "epic",
+    "region": "west"
   },
   {
+    "id": "Hidden Valley|MO",
     "name": "Hidden Valley",
     "state": "MO",
     "lat": 38.535899,
-    "lon": -90.653808
+    "lon": -90.653808,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Hidden Valley Resort|PA",
     "name": "Hidden Valley Resort",
     "state": "PA",
     "lat": 40.059028,
-    "lon": -79.25288
+    "lon": -79.25288,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Hunter|NY",
     "name": "Hunter",
     "state": "NY",
     "lat": 42.213699,
-    "lon": -74.218754
+    "lon": -74.218754,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Jack Frost|PA",
     "name": "Jack Frost",
     "state": "PA",
     "lat": 40.108035,
-    "lon": -75.163741
+    "lon": -75.163741,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Jackson Hole|WY",
+    "name": "Jackson Hole",
+    "state": "WY",
+    "lat": 43.684017,
+    "lon": -110.443663,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "June Mountain|CA",
+    "name": "June Mountain",
+    "state": "CA",
+    "lat": 37.739932,
+    "lon": -119.070144,
+    "passNetwork": "ikon",
+    "region": "west"
+  },
+  {
+    "id": "Keystone|CO",
     "name": "Keystone",
     "state": "CO",
     "lat": 39.596564,
-    "lon": -105.934034
+    "lon": -105.934034,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Killington|VT",
+    "name": "Killington",
+    "state": "VT",
+    "lat": 43.67433,
+    "lon": -72.778445,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Kirkwood|CA",
     "name": "Kirkwood",
     "state": "CA",
     "lat": 38.702686,
-    "lon": -120.072685
+    "lon": -120.072685,
+    "passNetwork": "epic",
+    "region": "west"
   },
   {
+    "id": "Laurel Mountain|PA",
     "name": "Laurel Mountain",
     "state": "PA",
     "lat": 40.211184,
-    "lon": -79.185031
+    "lon": -79.185031,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Liberty Mountain|PA",
     "name": "Liberty Mountain",
     "state": "PA",
     "lat": 39.760637,
-    "lon": -77.368534
+    "lon": -77.368534,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Loon Mountain|NH",
+    "name": "Loon Mountain",
+    "state": "NH",
+    "lat": 44.034872,
+    "lon": -71.620687,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Mad River Mountain|OH",
     "name": "Mad River Mountain",
     "state": "OH",
     "lat": 40.317239,
-    "lon": -83.675258
+    "lon": -83.675258,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Mammoth Mountain|CA",
+    "name": "Mammoth Mountain",
+    "state": "CA",
+    "lat": 37.630769,
+    "lon": -119.032634,
+    "passNetwork": "ikon",
+    "region": "west"
+  },
+  {
+    "id": "Mount Snow|VT",
     "name": "Mount Snow",
     "state": "VT",
     "lat": 42.959253,
-    "lon": -72.923761
+    "lon": -72.923761,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Mount Sunapee|NH",
     "name": "Mount Sunapee",
     "state": "NH",
     "lat": 43.340631,
-    "lon": -72.070918
+    "lon": -72.070918,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Mt Brighton|MI",
     "name": "Mt Brighton",
     "state": "MI",
     "lat": 42.54101,
-    "lon": -83.810807
+    "lon": -83.810807,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Northstar|CA",
     "name": "Northstar",
     "state": "CA",
     "lat": 33.656066,
-    "lon": -117.669511
+    "lon": -117.669511,
+    "passNetwork": "epic",
+    "region": "west"
   },
   {
+    "id": "Okemo|VT",
     "name": "Okemo",
     "state": "VT",
     "lat": 43.395853,
-    "lon": -72.75348
+    "lon": -72.75348,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Palisades Tahoe|CA",
+    "name": "Palisades Tahoe",
+    "state": "CA",
+    "lat": 39.1969,
+    "lon": -120.2358,
+    "passNetwork": "ikon",
+    "region": "west"
+  },
+  {
+    "id": "Paoli Peaks|IN",
     "name": "Paoli Peaks",
     "state": "IN",
     "lat": 38.555882,
-    "lon": -86.51218
+    "lon": -86.51218,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Park City|UT",
     "name": "Park City",
     "state": "UT",
     "lat": 40.646092,
-    "lon": -111.497996
+    "lon": -111.497996,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Roundtop|PA",
     "name": "Roundtop",
     "state": "PA",
     "lat": 40.093129,
-    "lon": -79.666985
+    "lon": -79.666985,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Schweitzer|ID",
+    "name": "Schweitzer",
+    "state": "ID",
+    "lat": 48.3787,
+    "lon": -116.613079,
+    "passNetwork": "ikon",
+    "region": "pacific-northwest"
+  },
+  {
+    "id": "Seven Springs|PA",
     "name": "Seven Springs",
     "state": "PA",
     "lat": 40.02313,
-    "lon": -79.297255
+    "lon": -79.297255,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Snow Creek|MO",
     "name": "Snow Creek",
     "state": "MO",
     "lat": 39.465625,
-    "lon": -94.968822
+    "lon": -94.968822,
+    "passNetwork": "epic",
+    "region": "midwest"
   },
   {
+    "id": "Snow Valley|CA",
+    "name": "Snow Valley",
+    "state": "CA",
+    "lat": 34.2247,
+    "lon": -117.0372,
+    "passNetwork": "ikon",
+    "region": "west"
+  },
+  {
+    "id": "Snowbird|UT",
+    "name": "Snowbird",
+    "state": "UT",
+    "lat": 40.580755,
+    "lon": -111.657296,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Snowshoe|WV",
+    "name": "Snowshoe",
+    "state": "WV",
+    "lat": 38.412824,
+    "lon": -79.996442,
+    "passNetwork": "ikon",
+    "region": "southeast"
+  },
+  {
+    "id": "Solitude|UT",
+    "name": "Solitude",
+    "state": "UT",
+    "lat": 40.620246,
+    "lon": -111.591904,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Steamboat|CO",
+    "name": "Steamboat",
+    "state": "CO",
+    "lat": 40.4848,
+    "lon": -106.831735,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Stevens Pass|WA",
     "name": "Stevens Pass",
     "state": "WA",
     "lat": 47.745635,
-    "lon": -121.089171
+    "lon": -121.089171,
+    "passNetwork": "epic",
+    "region": "pacific-northwest"
   },
   {
+    "id": "Stowe|VT",
     "name": "Stowe",
     "state": "VT",
     "lat": 44.464377,
-    "lon": -72.68562
+    "lon": -72.68562,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Stratton|VT",
+    "name": "Stratton",
+    "state": "VT",
+    "lat": 43.042856,
+    "lon": -72.910933,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Sugarbush|VT",
+    "name": "Sugarbush",
+    "state": "VT",
+    "lat": 44.151521,
+    "lon": -72.908467,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Sugarloaf|ME",
+    "name": "Sugarloaf",
+    "state": "ME",
+    "lat": 45.049526,
+    "lon": -70.314957,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Summit at Snoqualmie|WA",
+    "name": "Summit at Snoqualmie",
+    "state": "WA",
+    "lat": 47.4207,
+    "lon": -121.4137,
+    "passNetwork": "ikon",
+    "region": "pacific-northwest"
+  },
+  {
+    "id": "Sunday River|ME",
+    "name": "Sunday River",
+    "state": "ME",
+    "lat": 44.471828,
+    "lon": -70.86729,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Taos Ski Valley|NM",
+    "name": "Taos Ski Valley",
+    "state": "NM",
+    "lat": 36.596,
+    "lon": -105.4545,
+    "passNetwork": "ikon",
+    "region": "rockies"
+  },
+  {
+    "id": "Telluride Ski Resort|CO",
     "name": "Telluride Ski Resort",
     "state": "CO",
     "lat": 37.936187,
-    "lon": -107.845128
+    "lon": -107.845128,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Vail|CO",
     "name": "Vail",
     "state": "CO",
     "lat": 39.643803,
-    "lon": -106.388823
+    "lon": -106.388823,
+    "passNetwork": "epic",
+    "region": "rockies"
   },
   {
+    "id": "Whitetail|PA",
     "name": "Whitetail",
     "state": "PA",
     "lat": 39.756046,
-    "lon": -77.920545
+    "lon": -77.920545,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Wildcat|NH",
     "name": "Wildcat",
     "state": "NH",
     "lat": 43.138592,
-    "lon": -70.939403
+    "lon": -70.939403,
+    "passNetwork": "epic",
+    "region": "northeast"
   },
   {
+    "id": "Wilmot Mountain|WI",
     "name": "Wilmot Mountain",
     "state": "WI",
     "lat": 42.499847,
-    "lon": -88.190427
+    "lon": -88.190427,
+    "passNetwork": "epic",
+    "region": "midwest"
+  },
+  {
+    "id": "Windham Mountain|NY",
+    "name": "Windham Mountain",
+    "state": "NY",
+    "lat": 42.2967,
+    "lon": -74.2556,
+    "passNetwork": "ikon",
+    "region": "northeast"
+  },
+  {
+    "id": "Winter Park|CO",
+    "name": "Winter Park",
+    "state": "CO",
+    "lat": 39.918042,
+    "lon": -105.785563,
+    "passNetwork": "ikon",
+    "region": "rockies"
   }
 ]

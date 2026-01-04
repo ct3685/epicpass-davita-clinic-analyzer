@@ -3,8 +3,8 @@
 Fetch Hospital Data from OpenStreetMap
 ======================================
 
-Queries the OSM Overpass API for hospitals in states that have ski resorts,
-then filters to those within reasonable distance of ski areas.
+Queries the OSM Overpass API STATE BY STATE for hospitals,
+then filters to those within reasonable distance of ski resorts.
 
 Usage:
     python scripts/fetch_osm_hospitals.py
@@ -14,92 +14,91 @@ import json
 import time
 import math
 import requests
-from typing import Optional
+from typing import Optional, List
 
-# Overpass API endpoint
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+# Overpass API endpoints
+OVERPASS_ENDPOINTS = [
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass-api.de/api/interpreter",
+]
 
 # Files
 RESORTS_FILE = "public/resorts.json"
 OUTPUT_FILE = "public/hospitals.json"
 
 # Maximum distance from any ski resort (miles)
-MAX_DISTANCE_MILES = 100
+MAX_DISTANCE_MILES = 75
 
-# States with ski resorts (we'll only query hospitals in these states)
+# States with ski resorts
 SKI_STATES = [
-    "CA", "CO", "UT", "WY", "MT", "ID", "NM", "AZ", "NV",  # West/Rockies
-    "WA", "OR",  # Pacific NW
-    "VT", "NH", "ME", "NY", "PA", "MA", "CT", "NJ",  # Northeast
-    "MI", "WI", "MN", "OH", "IN", "MO",  # Midwest
-    "WV", "VA", "NC", "TN",  # Southeast
+    "California", "Colorado", "Utah", "Wyoming", "Montana", "Idaho",
+    "New Mexico", "Arizona", "Nevada", "Washington", "Oregon",
+    "Vermont", "New Hampshire", "Maine", "New York", "Pennsylvania",
+    "Massachusetts", "Connecticut", "New Jersey",
+    "Michigan", "Wisconsin", "Minnesota", "Ohio", "Indiana", "Missouri",
+    "West Virginia", "Virginia", "North Carolina", "Tennessee",
 ]
 
+STATE_ABBREVS = {
+    "California": "CA", "Colorado": "CO", "Utah": "UT", "Wyoming": "WY",
+    "Montana": "MT", "Idaho": "ID", "New Mexico": "NM", "Arizona": "AZ",
+    "Nevada": "NV", "Washington": "WA", "Oregon": "OR", "Vermont": "VT",
+    "New Hampshire": "NH", "Maine": "ME", "New York": "NY", "Pennsylvania": "PA",
+    "Massachusetts": "MA", "Connecticut": "CT", "New Jersey": "NJ",
+    "Michigan": "MI", "Wisconsin": "WI", "Minnesota": "MN", "Ohio": "OH",
+    "Indiana": "IN", "Missouri": "MO", "West Virginia": "WV", "Virginia": "VA",
+    "North Carolina": "NC", "Tennessee": "TN",
+}
+
+
 def haversine_miles(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """Calculate great-circle distance between two points in miles."""
-    r = 3958.8  # Earth's radius in miles
+    """Calculate great-circle distance in miles."""
+    r = 3958.8
     phi1, phi2 = math.radians(lat1), math.radians(lat2)
     dphi = math.radians(lat2 - lat1)
     dlambda = math.radians(lon2 - lon1)
-    
     a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
     return 2 * r * math.asin(math.sqrt(a))
 
-def load_resorts() -> list:
+
+def load_resorts() -> List[dict]:
     """Load existing resort data."""
     try:
         with open(RESORTS_FILE, "r") as f:
             return json.load(f)
     except FileNotFoundError:
-        print(f"Warning: {RESORTS_FILE} not found")
         return []
 
-def fetch_hospitals_for_state(state: str) -> list:
+
+def fetch_hospitals_for_state(state_name: str) -> List[dict]:
     """Fetch hospitals from OSM for a specific state."""
-    # Build Overpass query for hospitals in this state
     query = f"""
     [out:json][timeout:60];
-    area["name"~"{get_state_name(state)}"]["admin_level"="4"]->.state;
+    area["name"="{state_name}"]["admin_level"="4"]->.state;
     (
       nwr["amenity"="hospital"]["name"](area.state);
     );
     out center tags;
     """
     
-    try:
-        resp = requests.post(
-            OVERPASS_URL,
-            data={"data": query},
-            headers={"User-Agent": "SkiWithCare/2.0 (github.com/ct3685/skiwithcare)"},
-            timeout=120,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        return data.get("elements", [])
-    except requests.RequestException as e:
-        print(f"    Error fetching {state}: {e}")
-        return []
+    for endpoint in OVERPASS_ENDPOINTS:
+        for attempt in range(2):
+            try:
+                resp = requests.post(
+                    endpoint,
+                    data={"data": query},
+                    headers={"User-Agent": "SkiWithCare/2.0"},
+                    timeout=120,
+                )
+                resp.raise_for_status()
+                return resp.json().get("elements", [])
+            except requests.RequestException:
+                if attempt == 0:
+                    time.sleep(3)
+    return []
 
-def get_state_name(abbrev: str) -> str:
-    """Convert state abbreviation to full name for OSM query."""
-    names = {
-        "AL": "Alabama", "AK": "Alaska", "AZ": "Arizona", "AR": "Arkansas",
-        "CA": "California", "CO": "Colorado", "CT": "Connecticut", "DE": "Delaware",
-        "FL": "Florida", "GA": "Georgia", "HI": "Hawaii", "ID": "Idaho",
-        "IL": "Illinois", "IN": "Indiana", "IA": "Iowa", "KS": "Kansas",
-        "KY": "Kentucky", "LA": "Louisiana", "ME": "Maine", "MD": "Maryland",
-        "MA": "Massachusetts", "MI": "Michigan", "MN": "Minnesota", "MS": "Mississippi",
-        "MO": "Missouri", "MT": "Montana", "NE": "Nebraska", "NV": "Nevada",
-        "NH": "New Hampshire", "NJ": "New Jersey", "NM": "New Mexico", "NY": "New York",
-        "NC": "North Carolina", "ND": "North Dakota", "OH": "Ohio", "OK": "Oklahoma",
-        "OR": "Oregon", "PA": "Pennsylvania", "RI": "Rhode Island", "SC": "South Carolina",
-        "SD": "South Dakota", "TN": "Tennessee", "TX": "Texas", "UT": "Utah",
-        "VT": "Vermont", "VA": "Virginia", "WA": "Washington", "WV": "West Virginia",
-        "WI": "Wisconsin", "WY": "Wyoming",
-    }
-    return names.get(abbrev, abbrev)
 
-def process_hospital(el: dict, state: str, resorts: list) -> Optional[dict]:
+def process_hospital(el: dict, state_abbrev: str, resorts: List[dict]) -> Optional[dict]:
     """Process an OSM element into a hospital record."""
     tags = el.get("tags", {})
     name = tags.get("name")
@@ -109,17 +108,15 @@ def process_hospital(el: dict, state: str, resorts: list) -> Optional[dict]:
     
     # Get coordinates
     if el.get("type") == "node":
-        lat = el.get("lat")
-        lon = el.get("lon")
+        lat, lon = el.get("lat"), el.get("lon")
     else:
         center = el.get("center", {})
-        lat = center.get("lat")
-        lon = center.get("lon")
+        lat, lon = center.get("lat"), center.get("lon")
     
     if not lat or not lon:
         return None
     
-    # Find nearest resort and distance
+    # Find nearest resort
     min_dist = float("inf")
     nearest_resort = None
     
@@ -129,36 +126,27 @@ def process_hospital(el: dict, state: str, resorts: list) -> Optional[dict]:
             min_dist = dist
             nearest_resort = resort["name"]
     
-    # Skip if too far from any resort
+    # Skip if too far
     if min_dist > MAX_DISTANCE_MILES:
         return None
     
-    # Check for emergency room
     has_emergency = tags.get("emergency") == "yes" or "emergency" in name.lower()
-    
-    # Build address
-    address = tags.get("addr:street", "")
-    if tags.get("addr:housenumber"):
-        address = f"{tags['addr:housenumber']} {address}"
-    
-    city = tags.get("addr:city", "")
-    zip_code = tags.get("addr:postcode", "")
-    phone = tags.get("phone", tags.get("contact:phone", ""))
     
     return {
         "id": f"osm-{el.get('id')}",
         "name": name,
-        "address": address.strip(),
-        "city": city,
-        "state": state,
-        "zip": zip_code,
+        "address": tags.get("addr:street", ""),
+        "city": tags.get("addr:city", ""),
+        "state": state_abbrev,
+        "zip": tags.get("addr:postcode", ""),
         "lat": round(lat, 6),
         "lon": round(lon, 6),
         "hasEmergency": has_emergency,
-        "phone": phone if phone else None,
+        "phone": tags.get("phone", ""),
         "nearestResort": nearest_resort,
         "nearestResortDist": round(min_dist, 1),
     }
+
 
 def main():
     """Main execution."""
@@ -166,48 +154,48 @@ def main():
     print("SkiWithCare - OSM Hospital Data Fetcher")
     print("=" * 60)
     
-    # Load resort data for distance calculations
     resorts = load_resorts()
     if not resorts:
-        print("ERROR: No resort data found. Run fetch_osm_resorts.py first.")
+        print("ERROR: No resort data. Run fetch_osm_resorts.py first.")
         return
     
-    print(f"Loaded {len(resorts)} resorts for distance filtering")
+    print(f"Loaded {len(resorts)} resorts")
+    print(f"Querying {len(SKI_STATES)} states...\n")
     
-    # Fetch hospitals for each ski state
-    hospitals = []
+    all_hospitals = []
     seen_ids = set()
     
-    for state in SKI_STATES:
-        print(f"\nFetching hospitals in {state}...")
-        time.sleep(2)  # Rate limiting between states
+    for state_name in SKI_STATES:
+        state_abbrev = STATE_ABBREVS.get(state_name, state_name[:2])
+        print(f"Fetching hospitals in {state_name}...", end=" ", flush=True)
         
-        elements = fetch_hospitals_for_state(state)
-        print(f"  Found {len(elements)} hospitals in OSM")
+        elements = fetch_hospitals_for_state(state_name)
+        count = 0
         
         for el in elements:
-            hospital = process_hospital(el, state, resorts)
+            hospital = process_hospital(el, state_abbrev, resorts)
             if hospital and hospital["id"] not in seen_ids:
-                hospitals.append(hospital)
                 seen_ids.add(hospital["id"])
-                print(f"  ✓ {hospital['name']} ({hospital['nearestResortDist']} mi from {hospital['nearestResort']})")
+                all_hospitals.append(hospital)
+                count += 1
+        
+        print(f"found {count} near ski areas")
+        time.sleep(2)
     
-    # Sort by state, then name
-    hospitals.sort(key=lambda h: (h["state"], h["name"]))
+    # Sort
+    all_hospitals.sort(key=lambda h: (h["state"], h["name"]))
     
-    # Write output
-    print(f"\nWriting {len(hospitals)} hospitals to {OUTPUT_FILE}...")
+    # Write
+    print(f"\nWriting {len(all_hospitals)} hospitals to {OUTPUT_FILE}...")
     with open(OUTPUT_FILE, "w") as f:
-        json.dump(hospitals, f, indent=2)
+        json.dump(all_hospitals, f, indent=2)
     
-    # Summary
+    er_count = sum(1 for h in all_hospitals if h.get("hasEmergency"))
     print("\n" + "=" * 60)
-    print(f"SUCCESS: {len(hospitals)} hospitals within {MAX_DISTANCE_MILES} miles of ski resorts")
-    
-    er_count = sum(1 for h in hospitals if h.get("hasEmergency"))
-    print(f"  With Emergency Room: {er_count}")
+    print(f"SUCCESS: {len(all_hospitals)} hospitals within {MAX_DISTANCE_MILES} mi of resorts")
+    print(f"  With Emergency: {er_count}")
     print("=" * 60)
+
 
 if __name__ == "__main__":
     main()
-

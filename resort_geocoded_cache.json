@@ -348,5 +348,40 @@
     "lat": 38.4128243,
     "lon": -79.9964421,
     "query": "Snowshoe, WV, USA"
+  },
+  "Eldora Mountain Resort|CO": {
+    "lat": 39.9372,
+    "lon": -105.5827,
+    "query": "Eldora Mountain Resort|CO"
+  },
+  "Palisades Tahoe|CA": {
+    "lat": 39.1969,
+    "lon": -120.2358,
+    "query": "Palisades Tahoe|CA"
+  },
+  "Big Bear Mountain Resort|CA": {
+    "lat": 34.2364,
+    "lon": -116.8906,
+    "query": "Big Bear Mountain Resort|CA"
+  },
+  "Snow Valley|CA": {
+    "lat": 34.2247,
+    "lon": -117.0372,
+    "query": "Snow Valley|CA"
+  },
+  "Summit at Snoqualmie|WA": {
+    "lat": 47.4207,
+    "lon": -121.4137,
+    "query": "Summit at Snoqualmie|WA"
+  },
+  "Windham Mountain|NY": {
+    "lat": 42.2967,
+    "lon": -74.2556,
+    "query": "Windham Mountain|NY"
+  },
+  "Blue Mountain|PA": {
+    "lat": 40.9498,
+    "lon": -75.5157,
+    "query": "Blue Mountain|PA"
   }
 }

@@ -3,13 +3,8 @@
 Fetch Ski Resort Data from OpenStreetMap
 =========================================
 
-Queries the OSM Overpass API for ski resorts in the United States,
-enriches with Epic/Ikon pass network data, and outputs to public/resorts.json.
-
-Rate Limiting:
-- Overpass API is free but requests should be spaced out
-- This script is designed to run weekly via GitHub Actions
-- Manual runs should be infrequent
+Queries the OSM Overpass API STATE BY STATE for ski resorts,
+then enriches with Epic/Ikon pass network data.
 
 Usage:
     python scripts/fetch_osm_resorts.py
@@ -18,73 +13,80 @@ Usage:
 import json
 import time
 import requests
-from typing import Optional
+from typing import Optional, List
 
-# Overpass API endpoint (public, free, no API key)
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+# Overpass API endpoints (multiple mirrors for reliability)
+OVERPASS_ENDPOINTS = [
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass-api.de/api/interpreter",
+]
 
 # Output file
 OUTPUT_FILE = "public/resorts.json"
 
-# Overpass query for ski resorts in the United States
-# Queries for: landuse=winter_sports, sport=skiing, and piste:type areas
-OVERPASS_QUERY = """
-[out:json][timeout:120];
-area["name"="United States"]["admin_level"="2"]->.usa;
-(
-  // Ski areas marked as winter_sports
-  nwr["landuse"="winter_sports"](area.usa);
-  // Ski resorts
-  nwr["sport"="skiing"]["name"](area.usa);
-  // Downhill ski areas
-  nwr["piste:type"="downhill"]["name"](area.usa);
-  // Leisure ski resorts
-  nwr["leisure"="ski_resort"](area.usa);
-);
-out center tags;
-"""
+# States with ski resorts to query
+SKI_STATES = [
+    # West / Rockies
+    "California", "Colorado", "Utah", "Wyoming", "Montana", "Idaho", 
+    "New Mexico", "Arizona", "Nevada",
+    # Pacific Northwest
+    "Washington", "Oregon",
+    # Northeast
+    "Vermont", "New Hampshire", "Maine", "New York", "Pennsylvania", 
+    "Massachusetts", "Connecticut", "New Jersey",
+    # Midwest
+    "Michigan", "Wisconsin", "Minnesota", "Ohio", "Indiana", "Missouri",
+    # Southeast
+    "West Virginia", "Virginia", "North Carolina", "Tennessee",
+]
 
-# Epic Pass resorts (name patterns for matching)
-# Source: https://www.epicpass.com/
+# State name to abbreviation
+STATE_ABBREVS = {
+    "Alabama": "AL", "Alaska": "AK", "Arizona": "AZ", "Arkansas": "AR",
+    "California": "CA", "Colorado": "CO", "Connecticut": "CT", "Delaware": "DE",
+    "Florida": "FL", "Georgia": "GA", "Hawaii": "HI", "Idaho": "ID",
+    "Illinois": "IL", "Indiana": "IN", "Iowa": "IA", "Kansas": "KS",
+    "Kentucky": "KY", "Louisiana": "LA", "Maine": "ME", "Maryland": "MD",
+    "Massachusetts": "MA", "Michigan": "MI", "Minnesota": "MN", "Mississippi": "MS",
+    "Missouri": "MO", "Montana": "MT", "Nebraska": "NE", "Nevada": "NV",
+    "New Hampshire": "NH", "New Jersey": "NJ", "New Mexico": "NM", "New York": "NY",
+    "North Carolina": "NC", "North Dakota": "ND", "Ohio": "OH", "Oklahoma": "OK",
+    "Oregon": "OR", "Pennsylvania": "PA", "Rhode Island": "RI", "South Carolina": "SC",
+    "South Dakota": "SD", "Tennessee": "TN", "Texas": "TX", "Utah": "UT",
+    "Vermont": "VT", "Virginia": "VA", "Washington": "WA", "West Virginia": "WV",
+    "Wisconsin": "WI", "Wyoming": "WY",
+}
+
+# Epic Pass resorts (for tagging)
 EPIC_RESORTS = {
-    # Vail Resorts owned
     "vail", "beaver creek", "breckenridge", "keystone", "crested butte",
     "park city", "heavenly", "northstar", "kirkwood", "stevens pass",
     "stowe", "okemo", "mount snow", "hunter mountain", "attitash",
-    "wildcat", "mount sunapee", "crotched mountain",
-    # Mid-Atlantic
+    "wildcat", "mount sunapee", "crotched",
     "liberty mountain", "roundtop", "whitetail", "jack frost", "big boulder",
     "seven springs", "hidden valley", "laurel mountain",
-    # Midwest
     "wilmot", "afton alps", "mt brighton", "alpine valley", "boston mills",
     "brandywine", "mad river mountain", "snow creek", "paoli peaks",
-    # Partners
     "telluride",
 }
 
-# Ikon Pass resorts (name patterns for matching)
-# Source: https://www.ikonpass.com/
+# Ikon Pass resorts (for tagging)
 IKON_RESORTS = {
-    # Full access
     "aspen", "snowmass", "steamboat", "winter park", "copper mountain",
     "eldora", "jackson hole", "big sky", "alta", "snowbird",
     "deer valley", "brighton", "solitude", "taos",
-    # Tahoe
     "palisades tahoe", "squaw valley", "alpine meadows", "mammoth",
     "june mountain", "big bear", "snow valley",
-    # Pacific Northwest  
     "crystal mountain", "snoqualmie", "schweitzer",
-    # Northeast
     "stratton", "sugarbush", "killington", "pico", "sunday river",
     "sugarloaf", "loon mountain", "windham",
-    # Midwest
     "boyne highlands", "boyne mountain",
-    # Southeast
     "snowshoe",
 }
 
-def get_region(state: str, lat: float, lon: float) -> str:
-    """Determine geographic region based on state and coordinates."""
+
+def get_region(state_abbrev: str) -> str:
+    """Determine geographic region based on state."""
     northeast = {"ME", "NH", "VT", "MA", "RI", "CT", "NY", "NJ", "PA"}
     southeast = {"WV", "VA", "NC", "TN", "GA"}
     midwest = {"OH", "MI", "IN", "IL", "WI", "MN", "IA", "MO", "ND", "SD", "NE", "KS"}
@@ -92,26 +94,20 @@ def get_region(state: str, lat: float, lon: float) -> str:
     west = {"CA", "NV", "AZ"}
     pacific_nw = {"WA", "OR"}
     
-    if state in northeast:
+    if state_abbrev in northeast:
         return "northeast"
-    elif state in southeast:
+    elif state_abbrev in southeast:
         return "southeast"
-    elif state in midwest:
+    elif state_abbrev in midwest:
         return "midwest"
-    elif state in rockies:
+    elif state_abbrev in rockies:
         return "rockies"
-    elif state in west:
+    elif state_abbrev in west:
         return "west"
-    elif state in pacific_nw:
+    elif state_abbrev in pacific_nw:
         return "pacific-northwest"
-    else:
-        # Default based on longitude
-        if lon < -115:
-            return "west"
-        elif lon < -100:
-            return "rockies"
-        else:
-            return "midwest"
+    return "other"
+
 
 def get_pass_network(name: str) -> str:
     """Determine pass network affiliation based on resort name."""
@@ -126,181 +122,129 @@ def get_pass_network(name: str) -> str:
         return "epic"
     elif is_ikon:
         return "ikon"
+    return "independent"
+
+
+def fetch_resorts_for_state(state_name: str) -> List[dict]:
+    """Fetch ski resorts from OSM for a specific state."""
+    query = f"""
+    [out:json][timeout:30];
+    area["name"="{state_name}"]["admin_level"="4"]->.state;
+    (
+      nwr["landuse"="winter_sports"]["name"](area.state);
+      nwr["sport"="skiing"]["name"](area.state);
+      nwr["piste:type"="downhill"]["name"](area.state);
+      nwr["leisure"="ski_resort"]["name"](area.state);
+    );
+    out center tags;
+    """
+    
+    for endpoint in OVERPASS_ENDPOINTS:
+        try:
+            resp = requests.post(
+                endpoint,
+                data={"data": query},
+                headers={"User-Agent": "SkiWithCare/2.0"},
+                timeout=45,
+            )
+            resp.raise_for_status()
+            return resp.json().get("elements", [])
+        except requests.RequestException as e:
+            continue  # Try next endpoint
+    
+    print("(timeout) ", end="", flush=True)
+    return []
+
+
+def process_element(el: dict, state_name: str) -> Optional[dict]:
+    """Process an OSM element into a resort record."""
+    tags = el.get("tags", {})
+    name = tags.get("name")
+    
+    if not name:
+        return None
+    
+    # Get coordinates
+    if el.get("type") == "node":
+        lat = el.get("lat")
+        lon = el.get("lon")
     else:
-        return "independent"
-
-def get_state_from_coords(lat: float, lon: float) -> Optional[str]:
-    """
-    Reverse geocode to get state from coordinates.
-    Uses Nominatim with proper rate limiting.
-    """
-    try:
-        time.sleep(1.1)  # Nominatim rate limit: 1 req/sec
-        url = "https://nominatim.openstreetmap.org/reverse"
-        params = {
-            "lat": lat,
-            "lon": lon,
-            "format": "json",
-            "zoom": 5,  # State level
-        }
-        headers = {"User-Agent": "SkiWithCare/2.0 (github.com/ct3685/skiwithcare)"}
-        
-        resp = requests.get(url, params=params, headers=headers, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-        
-        address = data.get("address", {})
-        state = address.get("state")
-        
-        if state:
-            # Convert state name to abbreviation
-            return STATE_ABBREVS.get(state.upper(), state[:2].upper())
-        
+        center = el.get("center", {})
+        lat = center.get("lat")
+        lon = center.get("lon")
+    
+    if not lat or not lon:
         return None
-    except Exception as e:
-        print(f"  Warning: Could not reverse geocode ({lat}, {lon}): {e}")
-        return None
+    
+    state_abbrev = STATE_ABBREVS.get(state_name, state_name[:2].upper())
+    pass_network = get_pass_network(name)
+    region = get_region(state_abbrev)
+    
+    return {
+        "id": f"{name}|{state_abbrev}",
+        "name": name,
+        "state": state_abbrev,
+        "lat": round(lat, 6),
+        "lon": round(lon, 6),
+        "passNetwork": pass_network,
+        "region": region,
+    }
 
-# State name to abbreviation mapping
-STATE_ABBREVS = {
-    "ALABAMA": "AL", "ALASKA": "AK", "ARIZONA": "AZ", "ARKANSAS": "AR",
-    "CALIFORNIA": "CA", "COLORADO": "CO", "CONNECTICUT": "CT", "DELAWARE": "DE",
-    "FLORIDA": "FL", "GEORGIA": "GA", "HAWAII": "HI", "IDAHO": "ID",
-    "ILLINOIS": "IL", "INDIANA": "IN", "IOWA": "IA", "KANSAS": "KS",
-    "KENTUCKY": "KY", "LOUISIANA": "LA", "MAINE": "ME", "MARYLAND": "MD",
-    "MASSACHUSETTS": "MA", "MICHIGAN": "MI", "MINNESOTA": "MN", "MISSISSIPPI": "MS",
-    "MISSOURI": "MO", "MONTANA": "MT", "NEBRASKA": "NE", "NEVADA": "NV",
-    "NEW HAMPSHIRE": "NH", "NEW JERSEY": "NJ", "NEW MEXICO": "NM", "NEW YORK": "NY",
-    "NORTH CAROLINA": "NC", "NORTH DAKOTA": "ND", "OHIO": "OH", "OKLAHOMA": "OK",
-    "OREGON": "OR", "PENNSYLVANIA": "PA", "RHODE ISLAND": "RI", "SOUTH CAROLINA": "SC",
-    "SOUTH DAKOTA": "SD", "TENNESSEE": "TN", "TEXAS": "TX", "UTAH": "UT",
-    "VERMONT": "VT", "VIRGINIA": "VA", "WASHINGTON": "WA", "WEST VIRGINIA": "WV",
-    "WISCONSIN": "WI", "WYOMING": "WY",
-}
-
-def fetch_osm_resorts() -> list:
-    """Fetch ski resorts from OSM Overpass API."""
-    print("Fetching ski resorts from OpenStreetMap Overpass API...")
-    print(f"  Endpoint: {OVERPASS_URL}")
-    
-    try:
-        resp = requests.post(
-            OVERPASS_URL,
-            data={"data": OVERPASS_QUERY},
-            headers={"User-Agent": "SkiWithCare/2.0 (github.com/ct3685/skiwithcare)"},
-            timeout=180,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        
-        elements = data.get("elements", [])
-        print(f"  Found {len(elements)} elements from OSM")
-        
-        return elements
-    except requests.RequestException as e:
-        print(f"  ERROR: Failed to fetch from Overpass API: {e}")
-        return []
-
-def process_resorts(elements: list) -> list:
-    """Process OSM elements into resort records."""
-    print("Processing resort data...")
-    
-    resorts = []
-    seen_names = set()
-    
-    for el in elements:
-        tags = el.get("tags", {})
-        name = tags.get("name")
-        
-        if not name:
-            continue
-        
-        # Skip duplicates
-        name_key = name.lower().strip()
-        if name_key in seen_names:
-            continue
-        seen_names.add(name_key)
-        
-        # Get coordinates (center for ways/relations)
-        if el.get("type") == "node":
-            lat = el.get("lat")
-            lon = el.get("lon")
-        else:
-            center = el.get("center", {})
-            lat = center.get("lat")
-            lon = center.get("lon")
-        
-        if not lat or not lon:
-            continue
-        
-        # Filter to continental US bounds
-        if not (24.0 < lat < 50.0 and -125.0 < lon < -66.0):
-            continue
-        
-        # Get state from tags or reverse geocode
-        state = tags.get("addr:state")
-        if not state:
-            state = get_state_from_coords(lat, lon)
-        if not state:
-            print(f"  Skipping {name} - could not determine state")
-            continue
-        
-        # Determine pass network and region
-        pass_network = get_pass_network(name)
-        region = get_region(state, lat, lon)
-        
-        resort = {
-            "id": f"{name}|{state}",
-            "name": name,
-            "state": state,
-            "lat": round(lat, 6),
-            "lon": round(lon, 6),
-            "passNetwork": pass_network,
-            "region": region,
-        }
-        
-        resorts.append(resort)
-        print(f"  ✓ {name}, {state} ({pass_network})")
-    
-    return resorts
 
 def main():
     """Main execution."""
-    print("=" * 60)
-    print("SkiWithCare - OSM Resort Data Fetcher")
-    print("=" * 60)
+    import sys
     
-    # Fetch from OSM
-    elements = fetch_osm_resorts()
+    print("=" * 60, flush=True)
+    print("SkiWithCare - OSM Resort Data Fetcher", flush=True)
+    print("=" * 60, flush=True)
+    print(f"Querying {len(SKI_STATES)} states individually...\n", flush=True)
     
-    if not elements:
-        print("No data fetched, exiting.")
-        return
+    all_resorts = []
+    seen_names = set()
     
-    # Process into resort records
-    resorts = process_resorts(elements)
+    for i, state in enumerate(SKI_STATES, 1):
+        print(f"[{i}/{len(SKI_STATES)}] {state}... ", end="", flush=True)
+        sys.stdout.flush()
+        
+        elements = fetch_resorts_for_state(state)
+        count = 0
+        
+        for el in elements:
+            resort = process_element(el, state)
+            if resort:
+                # Deduplicate by name
+                name_key = resort["name"].lower().strip()
+                if name_key not in seen_names:
+                    seen_names.add(name_key)
+                    all_resorts.append(resort)
+                    count += 1
+        
+        print(f"✓ {count} resorts", flush=True)
+        time.sleep(1)  # Rate limiting between states
     
     # Sort by name
-    resorts.sort(key=lambda r: r["name"])
+    all_resorts.sort(key=lambda r: r["name"])
     
     # Write output
-    print(f"\nWriting {len(resorts)} resorts to {OUTPUT_FILE}...")
+    print(f"\nWriting {len(all_resorts)} resorts to {OUTPUT_FILE}...")
     with open(OUTPUT_FILE, "w") as f:
-        json.dump(resorts, f, indent=2)
+        json.dump(all_resorts, f, indent=2)
     
-    # Summary
+    # Summary by pass network
+    epic_count = sum(1 for r in all_resorts if r["passNetwork"] == "epic")
+    ikon_count = sum(1 for r in all_resorts if r["passNetwork"] == "ikon")
+    both_count = sum(1 for r in all_resorts if r["passNetwork"] == "both")
+    indie_count = sum(1 for r in all_resorts if r["passNetwork"] == "independent")
+    
     print("\n" + "=" * 60)
-    print(f"SUCCESS: {len(resorts)} resorts written to {OUTPUT_FILE}")
-    
-    epic_count = sum(1 for r in resorts if r["passNetwork"] in ("epic", "both"))
-    ikon_count = sum(1 for r in resorts if r["passNetwork"] in ("ikon", "both"))
-    indie_count = sum(1 for r in resorts if r["passNetwork"] == "independent")
-    
+    print(f"SUCCESS: {len(all_resorts)} total resorts")
     print(f"  Epic Pass: {epic_count}")
     print(f"  Ikon Pass: {ikon_count}")
+    print(f"  Both: {both_count}")
     print(f"  Independent: {indie_count}")
     print("=" * 60)
 
+
 if __name__ == "__main__":
     main()
-

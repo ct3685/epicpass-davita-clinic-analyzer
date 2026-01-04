@@ -1,6 +1,10 @@
 import { useSelectionStore, useSettingsStore } from "@/stores";
 import type { ViewMode } from "@/stores/selectionStore";
-import { trackModeSwitch, trackLogoClick, trackSettingsOpen } from "@/utils/analytics";
+import {
+  trackModeSwitch,
+  trackLogoClick,
+  trackSettingsOpen,
+} from "@/utils/analytics";
 
 const modes: { id: ViewMode; label: string; icon: string }[] = [
   { id: "resorts", label: "Resorts", icon: "🏔️" },
@@ -50,7 +54,9 @@ export function Header() {
               <span className="text-[#e879a0]">Ski</span>
               <span className="text-[#64d9f7]">WithCare</span>
             </h1>
-            <span className="text-xs text-text-muted">Care Near the Slopes</span>
+            <span className="text-xs text-text-muted">
+              Care Near the Slopes
+            </span>
           </div>
         </button>
 
@@ -90,4 +96,3 @@ export function Header() {
     </header>
   );
 }
-
