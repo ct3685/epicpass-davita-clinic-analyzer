@@ -2,4 +2,3 @@
 export * from "./resorts";
 export * from "./clinics";
 export * from "./hospitals";
-
