@@ -35,9 +35,9 @@
     "query": "Heavenly, CA/NV, USA"
   },
   "Northstar|CA": {
-    "lat": 33.6560659,
-    "lon": -117.6695109,
-    "query": "Northstar, CA, USA"
+    "lat": 39.2746,
+    "lon": -120.1207,
+    "query": "Northstar California Resort"
   },
   "Kirkwood|CA": {
     "lat": 38.7026857,
@@ -383,5 +383,10 @@
     "lat": 40.9498,
     "lon": -75.5157,
     "query": "Blue Mountain|PA"
+  },
+  "Heavenly|CA": {
+    "lat": 38.9404518,
+    "lon": -119.8974215,
+    "query": "Heavenly, CA/NV, USA"
   }
 }

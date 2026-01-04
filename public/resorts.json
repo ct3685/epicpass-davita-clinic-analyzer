@@ -86,7 +86,7 @@
     "state": "PA",
     "lat": 40.9498,
     "lon": -75.5157,
-    "passNetwork": "ikon",
+    "passNetwork": "independent",
     "region": "northeast"
   },
   {
@@ -230,7 +230,7 @@
     "state": "NY",
     "lat": 42.213699,
     "lon": -74.218754,
-    "passNetwork": "epic",
+    "passNetwork": "independent",
     "region": "northeast"
   },
   {
@@ -356,15 +356,15 @@
     "state": "MI",
     "lat": 42.54101,
     "lon": -83.810807,
-    "passNetwork": "epic",
+    "passNetwork": "both",
     "region": "midwest"
   },
   {
     "id": "Northstar|CA",
     "name": "Northstar",
     "state": "CA",
-    "lat": 33.656066,
-    "lon": -117.669511,
+    "lat": 39.2746,
+    "lon": -120.1207,
     "passNetwork": "epic",
     "region": "west"
   },
@@ -420,7 +420,7 @@
     "lat": 48.3787,
     "lon": -116.613079,
     "passNetwork": "ikon",
-    "region": "pacific-northwest"
+    "region": "rockies"
   },
   {
     "id": "Seven Springs|PA",
