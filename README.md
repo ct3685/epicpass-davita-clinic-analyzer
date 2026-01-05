@@ -62,7 +62,7 @@ cd skiwithcare
 # First time: set up Python venv
 python3 -m venv venv
 source venv/bin/activate
-pip install -r requirements.txt
+pip install -r scripts/requirements.txt
 
 # Build and serve
 pnpm start
@@ -93,7 +93,8 @@ The build step generates the JSON data files in `public/` from the latest CMS da
 ├── davita_geocoded_cache.json  # Cached clinic coordinates
 ├── netlify.toml                # Netlify config (build, redirects, headers)
 ├── package.json                # NPM scripts for local dev
-└── requirements.txt            # Python dependencies
+└── scripts/
+    └── requirements.txt        # Python dependencies
 ```
 
 ---
