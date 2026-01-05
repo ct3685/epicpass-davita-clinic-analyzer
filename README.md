@@ -64,37 +64,40 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r scripts/requirements.txt
 
-# Build and serve
-pnpm start
+# Start development server
+pnpm dev
 
 # Open in browser
-open http://localhost:8000
+open http://localhost:3000
 ```
 
-The build step generates the JSON data files in `public/` from the latest CMS data.
+**Note:** Data files (`resorts.json`, `clinics.json`) are pre-generated and committed to the repo. To regenerate them, run `pnpm data:all` (requires Python venv setup).
 
 ---
 
 ## 📁 Project Structure
 
 ```
-├── public/                     # Deployed to Netlify
-│   ├── index.html              # Main dashboard
+├── public/                     # Static assets (served as-is)
 │   ├── resorts.json            # 37 Epic Pass US resorts (generated)
 │   ├── clinics.json            # 1,590+ DaVita clinics (generated)
+│   ├── hospitals.json          # Hospital data (generated)
 │   ├── logo-512.png            # App icon
 │   ├── og-image.png            # Social preview image
 │   ├── sitemap.xml             # SEO sitemap
 │   └── robots.txt              # Search engine directives
-├── .cursor/                    # AI collaboration rules
-│   └── rules                   # Brand + coding guidelines
-├── epic_davita.py              # Data generator script
-├── resort_geocoded_cache.json  # Cached resort coordinates
-├── davita_geocoded_cache.json  # Cached clinic coordinates
+├── src/                        # React + TypeScript source code
+│   ├── components/             # React components
+│   ├── stores/                 # Zustand state management
+│   ├── hooks/                  # Custom React hooks
+│   └── utils/                  # Utility functions
+├── scripts/                    # Python data generation scripts
+│   ├── build_resorts.py        # Generate resorts data
+│   ├── generate_data.py        # Generate clinics data
+│   └── requirements.txt        # Python dependencies
+├── index.html                  # Main entry point
 ├── netlify.toml                # Netlify config (build, redirects, headers)
-├── package.json                # NPM scripts for local dev
-└── scripts/
-    └── requirements.txt        # Python dependencies
+└── package.json                # NPM scripts for local dev
 ```
 
 ---
@@ -113,13 +116,16 @@ Data is automatically refreshed on every deploy. The build process:
 
 ```bash
 # Using pnpm (requires venv to be set up)
-pnpm start           # Build + serve in one command
-pnpm build           # Generate JSON files (~3 sec with cache)
-pnpm build:fresh     # Full refresh (~10 min, re-geocodes everything)
-pnpm serve           # Just serve (if JSON already exists)
+pnpm dev             # Start development server
+pnpm build           # Build production bundle
+pnpm preview         # Preview production build
+pnpm data:all        # Generate all data files (~3 sec with cache)
+pnpm data:resorts    # Generate resorts data only
+pnpm data:clinics    # Generate clinics data only
 
-# Or directly with venv Python
-./venv/bin/python epic_davita.py
+# Or directly with venv Python scripts
+./venv/bin/python scripts/build_resorts.py
+./venv/bin/python scripts/generate_data.py
 cd public && python3 -m http.server 8000
 ```
 
@@ -131,7 +137,7 @@ cd public && python3 -m http.server 8000
 
 | Layer           | Technology                                |
 | --------------- | ----------------------------------------- |
-| **Frontend**    | Vanilla JS, HTML, CSS                     |
+| **Frontend**    | React + TypeScript + Vite                 |
 | **Maps**        | Leaflet + MarkerCluster                   |
 | **Tiles**       | CARTO (Dark/Light)                        |
 | **Data**        | Static JSON (no backend needed)           |
@@ -139,7 +145,7 @@ cd public && python3 -m http.server 8000
 | **Data Source** | CMS Provider Data Catalog                 |
 | **Analytics**   | Google Analytics 4                        |
 
-**Zero external frameworks. Zero API keys. Zero backend.**
+**Zero API keys. Zero backend.**
 
 ---
 
