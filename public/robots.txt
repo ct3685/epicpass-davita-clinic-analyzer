@@ -1,5 +1,6 @@
 # SkiWithCare - https://skiwithcare.com
-# Find Dialysis Care Near Ski Resorts
+# Find Healthcare Near Ski Resorts
+# Hospitals, Dialysis Clinics & Medical Facilities
 
 User-agent: *
 Allow: /
