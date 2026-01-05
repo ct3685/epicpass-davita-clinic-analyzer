@@ -14,9 +14,10 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "data:resorts": "python3 scripts/build_resorts.py",
-    "data:hospitals": "python3 scripts/build_hospitals.py",
+    "data:enrich": "python3 scripts/enrich_resorts.py",
+    "data:hospitals": "python3 scripts/fetch_cms_hospitals.py",
     "data:clinics": "python3 scripts/generate_data.py",
-    "data:all": "npm run data:resorts && npm run data:hospitals"
+    "data:all": "npm run data:resorts && npm run data:enrich && npm run data:hospitals && npm run data:clinics"
   },
   "keywords": [
     "skiwithcare",
