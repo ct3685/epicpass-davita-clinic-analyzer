@@ -35,9 +35,9 @@
     "query": "Heavenly, CA/NV, USA"
   },
   "Northstar|CA": {
-    "lat": 33.6560659,
-    "lon": -117.6695109,
-    "query": "Northstar, CA, USA"
+    "lat": 39.2746,
+    "lon": -120.1207,
+    "query": "Northstar California Resort"
   },
   "Kirkwood|CA": {
     "lat": 38.7026857,
@@ -183,5 +183,210 @@
     "lat": 37.9361867,
     "lon": -107.8451282,
     "query": "Telluride Ski Resort, CO, USA"
+  },
+  "Aspen Snowmass|CO": {
+    "lat": 39.1857183,
+    "lon": -106.9448525,
+    "query": "Aspen Snowmass, CO, USA"
+  },
+  "Steamboat|CO": {
+    "lat": 40.4848003,
+    "lon": -106.831735,
+    "query": "Steamboat, CO, USA"
+  },
+  "Winter Park|CO": {
+    "lat": 39.9180425,
+    "lon": -105.7855635,
+    "query": "Winter Park, CO, USA"
+  },
+  "Copper Mountain|CO": {
+    "lat": 39.478088,
+    "lon": -106.1628887,
+    "query": "Copper Mountain, CO, USA"
+  },
+  "Eldora|CO": {
+    "lat": 39.956921,
+    "lon": -105.5829194,
+    "query": "Eldora, CO, USA"
+  },
+  "Arapahoe Basin|CO": {
+    "lat": 39.642515,
+    "lon": -105.8720778,
+    "query": "Arapahoe Basin, CO, USA"
+  },
+  "Snowbird|UT": {
+    "lat": 40.5807546,
+    "lon": -111.6572955,
+    "query": "Snowbird, UT, USA"
+  },
+  "Alta|UT": {
+    "lat": 40.5904037,
+    "lon": -111.635216,
+    "query": "Alta, UT, USA"
+  },
+  "Brighton|UT": {
+    "lat": 40.6018223,
+    "lon": -111.583314,
+    "query": "Brighton, UT, USA"
+  },
+  "Solitude|UT": {
+    "lat": 40.6202462,
+    "lon": -111.591904,
+    "query": "Solitude, UT, USA"
+  },
+  "Deer Valley|UT": {
+    "lat": 40.6382306,
+    "lon": -111.4770619,
+    "query": "Deer Valley, UT, USA"
+  },
+  "Jackson Hole|WY": {
+    "lat": 43.684017,
+    "lon": -110.4436629,
+    "query": "Jackson Hole, WY, USA"
+  },
+  "Big Sky|MT": {
+    "lat": 45.2589644,
+    "lon": -111.308725,
+    "query": "Big Sky, MT, USA"
+  },
+  "Taos Ski Valley|NM": {
+    "lat": 36.596,
+    "lon": -105.4545,
+    "query": "Taos Ski Valley, NM, USA"
+  },
+  "Mammoth Mountain|CA": {
+    "lat": 37.6307692,
+    "lon": -119.032634,
+    "query": "Mammoth Mountain, CA, USA"
+  },
+  "June Mountain|CA": {
+    "lat": 37.739932,
+    "lon": -119.0701438,
+    "query": "June Mountain, CA, USA"
+  },
+  "Big Bear Mountain|CA": {
+    "lat": 34.2404597,
+    "lon": -116.9185764,
+    "query": "Big Bear Mountain, CA, USA"
+  },
+  "Squaw Valley Alpine Meadows|CA": {
+    "lat": null,
+    "lon": null,
+    "query": "Squaw Valley Alpine Meadows, CA, USA"
+  },
+  "Mt Bachelor|OR": {
+    "lat": 43.9793848,
+    "lon": -121.6885078,
+    "query": "Mt Bachelor, OR, USA"
+  },
+  "Crystal Mountain|WA": {
+    "lat": 46.9327365,
+    "lon": -121.4877287,
+    "query": "Crystal Mountain, WA, USA"
+  },
+  "The Summit at Snoqualmie|WA": {
+    "lat": null,
+    "lon": null,
+    "query": "The Summit at Snoqualmie, WA, USA"
+  },
+  "Sun Valley|ID": {
+    "lat": 43.696215,
+    "lon": -114.353097,
+    "query": "Sun Valley, ID, USA"
+  },
+  "Schweitzer|ID": {
+    "lat": 48.3786997,
+    "lon": -116.6130791,
+    "query": "Schweitzer, ID, USA"
+  },
+  "Killington|VT": {
+    "lat": 43.67433,
+    "lon": -72.7784445,
+    "query": "Killington, VT, USA"
+  },
+  "Pico Mountain|VT": {
+    "lat": 43.6613186,
+    "lon": -72.842859,
+    "query": "Pico Mountain, VT, USA"
+  },
+  "Sugarbush|VT": {
+    "lat": 44.1515207,
+    "lon": -72.9084672,
+    "query": "Sugarbush, VT, USA"
+  },
+  "Stratton|VT": {
+    "lat": 43.0428562,
+    "lon": -72.9109334,
+    "query": "Stratton, VT, USA"
+  },
+  "Sunday River|ME": {
+    "lat": 44.4718276,
+    "lon": -70.8672899,
+    "query": "Sunday River, ME, USA"
+  },
+  "Sugarloaf|ME": {
+    "lat": 45.049526,
+    "lon": -70.3149571,
+    "query": "Sugarloaf, ME, USA"
+  },
+  "Loon Mountain|NH": {
+    "lat": 44.034872,
+    "lon": -71.6206874,
+    "query": "Loon Mountain, NH, USA"
+  },
+  "Boyne Highlands|MI": {
+    "lat": 45.4770305,
+    "lon": -84.9454211,
+    "query": "Boyne Highlands, MI, USA"
+  },
+  "Boyne Mountain|MI": {
+    "lat": 45.1586201,
+    "lon": -84.9389365,
+    "query": "Boyne Mountain, MI, USA"
+  },
+  "Snowshoe|WV": {
+    "lat": 38.4128243,
+    "lon": -79.9964421,
+    "query": "Snowshoe, WV, USA"
+  },
+  "Eldora Mountain Resort|CO": {
+    "lat": 39.9372,
+    "lon": -105.5827,
+    "query": "Eldora Mountain Resort|CO"
+  },
+  "Palisades Tahoe|CA": {
+    "lat": 39.1969,
+    "lon": -120.2358,
+    "query": "Palisades Tahoe|CA"
+  },
+  "Big Bear Mountain Resort|CA": {
+    "lat": 34.2364,
+    "lon": -116.8906,
+    "query": "Big Bear Mountain Resort|CA"
+  },
+  "Snow Valley|CA": {
+    "lat": 34.2247,
+    "lon": -117.0372,
+    "query": "Snow Valley|CA"
+  },
+  "Summit at Snoqualmie|WA": {
+    "lat": 47.4207,
+    "lon": -121.4137,
+    "query": "Summit at Snoqualmie|WA"
+  },
+  "Windham Mountain|NY": {
+    "lat": 42.2967,
+    "lon": -74.2556,
+    "query": "Windham Mountain|NY"
+  },
+  "Blue Mountain|PA": {
+    "lat": 40.9498,
+    "lon": -75.5157,
+    "query": "Blue Mountain|PA"
+  },
+  "Heavenly|CA": {
+    "lat": 38.9404518,
+    "lon": -119.8974215,
+    "query": "Heavenly, CA/NV, USA"
   }
 }
