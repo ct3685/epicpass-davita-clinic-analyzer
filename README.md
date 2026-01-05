@@ -64,6 +64,12 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r scripts/requirements.txt
 
+# Install npm dependencies
+pnpm install
+
+# Generate data files (resorts.json, clinics.json, etc.)
+pnpm data:all
+
 # Start development server
 pnpm dev
 
