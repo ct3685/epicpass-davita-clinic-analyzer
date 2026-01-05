@@ -17,7 +17,8 @@
     "data:enrich": "python3 scripts/enrich_resorts.py",
     "data:hospitals": "python3 scripts/fetch_cms_hospitals.py",
     "data:clinics": "python3 scripts/generate_data.py",
-    "data:all": "npm run data:resorts && npm run data:enrich && npm run data:hospitals && npm run data:clinics"
+    "data:all": "npm run data:resorts && npm run data:enrich && npm run data:hospitals && npm run data:clinics",
+    "prepare": "husky"
   },
   "keywords": [
     "skiwithcare",
@@ -44,6 +45,11 @@
     "react-leaflet": "^5.0.0",
     "zustand": "^5.0.0"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@playwright/test": "^1.50.0",
@@ -59,7 +65,9 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "husky": "^9.1.7",
     "jsdom": "^26.0.0",
+    "lint-staged": "^16.2.7",
     "postcss": "^8.5.0",
     "tailwindcss": "^3.4.17",
     "typescript": "~5.9.3",

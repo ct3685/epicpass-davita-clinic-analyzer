@@ -22,7 +22,9 @@ describe("nearestLocations", () => {
       const result = getNearestClinics(vailResort, mockClinics);
 
       for (let i = 1; i < result.length; i++) {
-        expect(result[i].distance).toBeGreaterThanOrEqual(result[i - 1].distance);
+        expect(result[i].distance).toBeGreaterThanOrEqual(
+          result[i - 1].distance
+        );
       }
     });
 
@@ -81,7 +83,9 @@ describe("nearestLocations", () => {
       // Default limit is 5
       expect(result.length).toBeLessThanOrEqual(5);
       // Default minCount is 3
-      expect(result.length).toBeGreaterThanOrEqual(Math.min(3, mockClinics.length));
+      expect(result.length).toBeGreaterThanOrEqual(
+        Math.min(3, mockClinics.length)
+      );
     });
 
     // REGRESSION TEST: This was the original bug - showing distant clinics
@@ -95,8 +99,8 @@ describe("nearestLocations", () => {
         city: "Vail",
         state: "CO",
         zip: "81657",
-        lat: 39.6410, // Very close to Vail
-        lon: -106.3750,
+        lat: 39.641, // Very close to Vail
+        lon: -106.375,
       };
 
       const distantClinic: Clinic = {
@@ -111,10 +115,14 @@ describe("nearestLocations", () => {
         lon: -74.006,
       };
 
-      const result = getNearestClinics(vailResort, [distantClinic, nearbyClinic], {
-        maxMiles: 100,
-        minCount: 1,
-      });
+      const result = getNearestClinics(
+        vailResort,
+        [distantClinic, nearbyClinic],
+        {
+          maxMiles: 100,
+          minCount: 1,
+        }
+      );
 
       // Nearby should be first
       expect(result[0].ccn).toBe("near-001");
@@ -132,7 +140,9 @@ describe("nearestLocations", () => {
       const result = getNearestHospitals(vailResort, mockHospitals);
 
       for (let i = 1; i < result.length; i++) {
-        expect(result[i].distance).toBeGreaterThanOrEqual(result[i - 1].distance);
+        expect(result[i].distance).toBeGreaterThanOrEqual(
+          result[i - 1].distance
+        );
       }
     });
 
@@ -152,11 +162,15 @@ describe("nearestLocations", () => {
       });
 
       // Should still return at least 3 (or all available if < 3)
-      expect(result.length).toBeGreaterThanOrEqual(Math.min(3, mockHospitals.length));
+      expect(result.length).toBeGreaterThanOrEqual(
+        Math.min(3, mockHospitals.length)
+      );
     });
 
     it("respects the limit parameter", () => {
-      const result = getNearestHospitals(vailResort, mockHospitals, { limit: 2 });
+      const result = getNearestHospitals(vailResort, mockHospitals, {
+        limit: 2,
+      });
 
       expect(result.length).toBeLessThanOrEqual(2);
     });
@@ -178,7 +192,9 @@ describe("nearestLocations", () => {
       });
 
       // Even in remote areas, skiers need to know where hospitals are
-      expect(result.length).toBeGreaterThanOrEqual(Math.min(3, mockHospitals.length));
+      expect(result.length).toBeGreaterThanOrEqual(
+        Math.min(3, mockHospitals.length)
+      );
     });
   });
 
@@ -190,15 +206,21 @@ describe("nearestLocations", () => {
     const burlingtonClinic = mockClinics.find((c) => c.city === "Burlington")!;
 
     it("returns resorts sorted by distance ascending", () => {
-      const result = getNearestResorts(denverClinic, mockResorts, { maxMiles: 200 });
+      const result = getNearestResorts(denverClinic, mockResorts, {
+        maxMiles: 200,
+      });
 
       for (let i = 1; i < result.length; i++) {
-        expect(result[i].distance).toBeGreaterThanOrEqual(result[i - 1].distance);
+        expect(result[i].distance).toBeGreaterThanOrEqual(
+          result[i - 1].distance
+        );
       }
     });
 
     it("includes distance property on each resort", () => {
-      const result = getNearestResorts(denverClinic, mockResorts, { maxMiles: 200 });
+      const result = getNearestResorts(denverClinic, mockResorts, {
+        maxMiles: 200,
+      });
 
       result.forEach((resort) => {
         expect(resort).toHaveProperty("distance");
@@ -207,7 +229,9 @@ describe("nearestLocations", () => {
     });
 
     it("STRICT: only returns resorts within maxMiles", () => {
-      const result = getNearestResorts(denverClinic, mockResorts, { maxMiles: 100 });
+      const result = getNearestResorts(denverClinic, mockResorts, {
+        maxMiles: 100,
+      });
 
       // ALL results must be within maxMiles
       result.forEach((resort) => {
@@ -216,7 +240,9 @@ describe("nearestLocations", () => {
     });
 
     it("STRICT: returns empty array if no resorts within maxMiles", () => {
-      const result = getNearestResorts(denverClinic, mockResorts, { maxMiles: 1 });
+      const result = getNearestResorts(denverClinic, mockResorts, {
+        maxMiles: 1,
+      });
 
       // Should be empty - no resort is 1 mile from Denver
       expect(result).toEqual([]);
@@ -292,7 +318,9 @@ describe("nearestLocations", () => {
       });
 
       for (let i = 1; i < result.length; i++) {
-        expect(result[i].distance).toBeGreaterThanOrEqual(result[i - 1].distance);
+        expect(result[i].distance).toBeGreaterThanOrEqual(
+          result[i - 1].distance
+        );
       }
     });
 
@@ -318,9 +346,13 @@ describe("nearestLocations", () => {
     });
 
     it("STRICT: returns empty array if no resorts within maxMiles", () => {
-      const result = getNearestResortsFromHospital(parkCityHospital, mockResorts, {
-        maxMiles: 1,
-      });
+      const result = getNearestResortsFromHospital(
+        parkCityHospital,
+        mockResorts,
+        {
+          maxMiles: 1,
+        }
+      );
 
       expect(result).toEqual([]);
     });
@@ -336,9 +368,13 @@ describe("nearestLocations", () => {
 
     // REGRESSION TEST: Same bug as clinics
     it("REGRESSION: does NOT show distant resorts beyond maxMiles", () => {
-      const result = getNearestResortsFromHospital(parkCityHospital, mockResorts, {
-        maxMiles: 100,
-      });
+      const result = getNearestResortsFromHospital(
+        parkCityHospital,
+        mockResorts,
+        {
+          maxMiles: 100,
+        }
+      );
 
       // Park City Hospital should only show Park City resort (nearby)
       result.forEach((resort) => {
@@ -348,6 +384,33 @@ describe("nearestLocations", () => {
       // Should NOT include Vermont resorts (~2000 miles away)
       const hasVermontResort = result.some((r) => r.state === "VT");
       expect(hasVermontResort).toBe(false);
+    });
+
+    // REGRESSION TEST: Using inline Hospital fixture for consistency
+    it("REGRESSION: remote hospital returns empty when no resorts nearby", () => {
+      const remoteHospital: Hospital = {
+        id: "hosp-remote",
+        name: "Remote Alaska Hospital",
+        address: "1 Remote Rd",
+        city: "Barrow",
+        state: "AK",
+        zip: "99723",
+        lat: 71.2906, // Barrow, Alaska - very remote
+        lon: -156.7886,
+        hasEmergency: true,
+        traumaLevel: 4,
+      };
+
+      const result = getNearestResortsFromHospital(
+        remoteHospital,
+        mockResorts,
+        {
+          maxMiles: 100,
+        }
+      );
+
+      // No resorts within 100 miles of Barrow, Alaska
+      expect(result).toEqual([]);
     });
   });
 
@@ -377,8 +440,12 @@ describe("nearestLocations", () => {
       });
 
       // Even with restrictive maxMiles, we get minCount results
-      expect(clinicResult.length).toBeGreaterThanOrEqual(Math.min(3, mockClinics.length));
-      expect(hospitalResult.length).toBeGreaterThanOrEqual(Math.min(3, mockHospitals.length));
+      expect(clinicResult.length).toBeGreaterThanOrEqual(
+        Math.min(3, mockClinics.length)
+      );
+      expect(hospitalResult.length).toBeGreaterThanOrEqual(
+        Math.min(3, mockHospitals.length)
+      );
     });
 
     it("clinics/hospitals get STRICT filtering (show only relevant nearby resorts)", () => {
@@ -403,4 +470,3 @@ describe("nearestLocations", () => {
     });
   });
 });
-

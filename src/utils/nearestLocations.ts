@@ -169,4 +169,3 @@ export function getNearestResortsFromHospital(
     .sort((a, b) => a.distance - b.distance)
     .slice(0, limit);
 }
-
