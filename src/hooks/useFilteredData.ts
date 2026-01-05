@@ -68,10 +68,15 @@ export function useFilteredData(
     }
 
     if (passNetworks.size > 0) {
-      filteredResorts = filteredResorts.filter((r) =>
+      filteredResorts = filteredResorts.filter((r) => {
         // If resort has no passNetwork, treat as "epic" (legacy data)
-        passNetworks.has(r.passNetwork || "epic")
-      );
+        const network = r.passNetwork || "epic";
+        // "both" should match if either epic or ikon is selected
+        if (network === "both") {
+          return passNetworks.has("epic") || passNetworks.has("ikon");
+        }
+        return passNetworks.has(network);
+      });
     }
 
     // Only filter by max distance if user location is set (not map center)

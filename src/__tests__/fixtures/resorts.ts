@@ -58,6 +58,15 @@ export const mockResorts: Resort[] = [
     passNetwork: "epic",
     region: "northeast",
   },
+  {
+    id: "Arapahoe Basin|CO",
+    name: "Arapahoe Basin",
+    state: "CO",
+    lat: 39.6426,
+    lon: -105.8719,
+    passNetwork: "both",
+    region: "rockies",
+  },
 ];
 
 /**
