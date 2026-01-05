@@ -4,4 +4,5 @@
 export * from "./haversine";
 export * from "./formatters";
 export * from "./analytics";
+export * from "./nearestLocations";
 

@@ -20,15 +20,13 @@ import {
 import { ResortCard, ClinicCard, HospitalCard } from "@/components/cards";
 import { Spinner } from "@/components/ui";
 import { useData, useFilteredData } from "@/hooks";
-import { haversine } from "@/utils/haversine";
-import type {
-  Resort,
-  Clinic,
-  Hospital,
-  ClinicWithDistance,
-  ResortWithDistance,
-  HospitalWithDistance,
-} from "@/types";
+import {
+  getNearestClinics,
+  getNearestHospitals,
+  getNearestResorts,
+  getNearestResortsFromHospital,
+} from "@/utils/nearestLocations";
+import type { Resort, Clinic, Hospital } from "@/types";
 
 function App() {
   const { colorTheme, darkMode } = useSettingsStore();
@@ -105,111 +103,24 @@ function App() {
     [select, toggleExpand, flyToItem]
   );
 
-  // Get nearest clinics for a resort
-  // Returns at least minCount items, prioritizing those within maxMiles
-  const getNearestClinics = useCallback(
-    (
-      resort: Resort,
-      limit = 5,
-      maxMiles = 100,
-      minCount = 3
-    ): ClinicWithDistance[] => {
-      const withDistance = clinics
-        .map((c) => ({
-          ...c,
-          distance: haversine(
-            { lat: resort.lat, lon: resort.lon },
-            { lat: c.lat, lon: c.lon }
-          ),
-        }))
-        .sort((a, b) => a.distance - b.distance);
-
-      // Get items within max distance
-      const withinRange = withDistance.filter((c) => c.distance <= maxMiles);
-
-      // Ensure at least minCount items (even if beyond maxMiles)
-      if (withinRange.length >= minCount) {
-        return withinRange.slice(0, limit);
-      }
-
-      // Need to include some beyond range to meet minimum
-      return withDistance.slice(
-        0,
-        Math.max(minCount, Math.min(limit, withinRange.length))
-      );
-    },
+  // Wrapper functions for nearest location queries (using extracted utility)
+  const getNearbyClinics = useCallback(
+    (resort: Resort) => getNearestClinics(resort, clinics),
     [clinics]
   );
 
-  // Get nearest hospitals for a resort
-  // Returns at least minCount items, prioritizing those within maxMiles
-  const getNearestHospitals = useCallback(
-    (
-      resort: Resort,
-      limit = 5,
-      maxMiles = 100,
-      minCount = 3
-    ): HospitalWithDistance[] => {
-      const withDistance = hospitals
-        .map((h) => ({
-          ...h,
-          distance: haversine(
-            { lat: resort.lat, lon: resort.lon },
-            { lat: h.lat, lon: h.lon }
-          ),
-        }))
-        .sort((a, b) => a.distance - b.distance);
-
-      // Get items within max distance
-      const withinRange = withDistance.filter((h) => h.distance <= maxMiles);
-
-      // Ensure at least minCount items (even if beyond maxMiles)
-      if (withinRange.length >= minCount) {
-        return withinRange.slice(0, limit);
-      }
-
-      // Need to include some beyond range to meet minimum
-      return withDistance.slice(
-        0,
-        Math.max(minCount, Math.min(limit, withinRange.length))
-      );
-    },
+  const getNearbyHospitals = useCallback(
+    (resort: Resort) => getNearestHospitals(resort, hospitals),
     [hospitals]
   );
 
-  // Get nearest resorts for a clinic (strict distance filter)
-  const getNearestResorts = useCallback(
-    (clinic: Clinic, limit = 5, maxMiles = 100): ResortWithDistance[] => {
-      return resorts
-        .map((r) => ({
-          ...r,
-          distance: haversine(
-            { lat: clinic.lat, lon: clinic.lon },
-            { lat: r.lat, lon: r.lon }
-          ),
-        }))
-        .filter((r) => r.distance <= maxMiles)
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, limit);
-    },
+  const getNearbyResorts = useCallback(
+    (clinic: Clinic) => getNearestResorts(clinic, resorts),
     [resorts]
   );
 
-  // Get nearest resorts for a hospital (strict distance filter)
-  const getNearestResortsFromHospital = useCallback(
-    (hospital: Hospital, limit = 5, maxMiles = 100): ResortWithDistance[] => {
-      return resorts
-        .map((r) => ({
-          ...r,
-          distance: haversine(
-            { lat: hospital.lat, lon: hospital.lon },
-            { lat: r.lat, lon: r.lon }
-          ),
-        }))
-        .filter((r) => r.distance <= maxMiles)
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, limit);
-    },
+  const getNearbyResortsFromHospital = useCallback(
+    (hospital: Hospital) => getNearestResortsFromHospital(hospital, resorts),
     [resorts]
   );
 
@@ -240,8 +151,8 @@ function App() {
     if (mode === "resorts") {
       const resort = filtered.resorts.find((r) => r.id === expandedId);
       if (!resort) return null;
-      const nearestClinics = getNearestClinics(resort);
-      const nearestHospitals = getNearestHospitals(resort);
+      const nearestClinics = getNearbyClinics(resort);
+      const nearestHospitals = getNearbyHospitals(resort);
       return {
         type: "resort" as const,
         item: resort,
@@ -266,7 +177,7 @@ function App() {
     if (mode === "clinics") {
       const clinic = filtered.clinics.find((c) => c.ccn === expandedId);
       if (!clinic) return null;
-      const nearestResorts = getNearestResorts(clinic);
+      const nearestResorts = getNearbyResorts(clinic);
       return {
         type: "clinic" as const,
         item: clinic,
@@ -282,7 +193,7 @@ function App() {
     if (mode === "hospitals") {
       const hospital = filtered.hospitals.find((h) => h.id === expandedId);
       if (!hospital) return null;
-      const nearestResorts = getNearestResortsFromHospital(hospital);
+      const nearestResorts = getNearbyResortsFromHospital(hospital);
       return {
         type: "hospital" as const,
         item: hospital,
@@ -300,10 +211,10 @@ function App() {
     expandedId,
     mode,
     filtered,
-    getNearestClinics,
-    getNearestHospitals,
-    getNearestResorts,
-    getNearestResortsFromHospital,
+    getNearbyClinics,
+    getNearbyHospitals,
+    getNearbyResorts,
+    getNearbyResortsFromHospital,
   ]);
 
   // Fit map bounds to show expanded item and all related items
@@ -367,8 +278,8 @@ function App() {
             key={resort.id}
             resort={resort}
             userDistance={resort.distance}
-            nearestClinics={getNearestClinics(resort)}
-            nearestHospitals={getNearestHospitals(resort)}
+            nearestClinics={getNearbyClinics(resort)}
+            nearestHospitals={getNearbyHospitals(resort)}
             onDirectionsClick={handleDirections}
           />
         ));
@@ -387,7 +298,7 @@ function App() {
             key={clinic.ccn}
             clinic={clinic}
             userDistance={clinic.distance}
-            nearestResorts={getNearestResorts(clinic)}
+            nearestResorts={getNearbyResorts(clinic)}
             onDirectionsClick={handleDirections}
           />
         ));
@@ -406,7 +317,7 @@ function App() {
             key={hospital.id}
             hospital={hospital}
             userDistance={hospital.distance}
-            nearestResorts={getNearestResortsFromHospital(hospital)}
+            nearestResorts={getNearbyResortsFromHospital(hospital)}
             onDirectionsClick={handleDirections}
           />
         ));
