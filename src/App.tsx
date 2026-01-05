@@ -15,6 +15,7 @@ import {
   ConnectionLegend,
   SecondaryClinicMarker,
   SecondaryResortMarker,
+  SecondaryHospitalMarker,
 } from "@/components/map";
 import { ResortCard, ClinicCard, HospitalCard } from "@/components/cards";
 import { Spinner } from "@/components/ui";
@@ -26,11 +27,19 @@ import type {
   Hospital,
   ClinicWithDistance,
   ResortWithDistance,
+  HospitalWithDistance,
 } from "@/types";
 
 function App() {
   const { colorTheme, darkMode } = useSettingsStore();
-  const { mode, selectedId, expandedId, highlightedConnectionIndex, select, toggleExpand } = useSelectionStore();
+  const {
+    mode,
+    selectedId,
+    expandedId,
+    highlightedConnectionIndex,
+    select,
+    toggleExpand,
+  } = useSelectionStore();
   const { userLocation } = useLocationStore();
   const mapRef = useRef<LeafletMap | null>(null);
 
@@ -99,7 +108,12 @@ function App() {
   // Get nearest clinics for a resort
   // Returns at least minCount items, prioritizing those within maxMiles
   const getNearestClinics = useCallback(
-    (resort: Resort, limit = 5, maxMiles = 100, minCount = 3): ClinicWithDistance[] => {
+    (
+      resort: Resort,
+      limit = 5,
+      maxMiles = 100,
+      minCount = 3
+    ): ClinicWithDistance[] => {
       const withDistance = clinics
         .map((c) => ({
           ...c,
@@ -109,26 +123,64 @@ function App() {
           ),
         }))
         .sort((a, b) => a.distance - b.distance);
-      
+
       // Get items within max distance
       const withinRange = withDistance.filter((c) => c.distance <= maxMiles);
-      
+
       // Ensure at least minCount items (even if beyond maxMiles)
       if (withinRange.length >= minCount) {
         return withinRange.slice(0, limit);
       }
-      
+
       // Need to include some beyond range to meet minimum
-      return withDistance.slice(0, Math.max(minCount, Math.min(limit, withinRange.length)));
+      return withDistance.slice(
+        0,
+        Math.max(minCount, Math.min(limit, withinRange.length))
+      );
     },
     [clinics]
   );
 
-  // Get nearest resorts for a clinic
+  // Get nearest hospitals for a resort
   // Returns at least minCount items, prioritizing those within maxMiles
+  const getNearestHospitals = useCallback(
+    (
+      resort: Resort,
+      limit = 5,
+      maxMiles = 100,
+      minCount = 3
+    ): HospitalWithDistance[] => {
+      const withDistance = hospitals
+        .map((h) => ({
+          ...h,
+          distance: haversine(
+            { lat: resort.lat, lon: resort.lon },
+            { lat: h.lat, lon: h.lon }
+          ),
+        }))
+        .sort((a, b) => a.distance - b.distance);
+
+      // Get items within max distance
+      const withinRange = withDistance.filter((h) => h.distance <= maxMiles);
+
+      // Ensure at least minCount items (even if beyond maxMiles)
+      if (withinRange.length >= minCount) {
+        return withinRange.slice(0, limit);
+      }
+
+      // Need to include some beyond range to meet minimum
+      return withDistance.slice(
+        0,
+        Math.max(minCount, Math.min(limit, withinRange.length))
+      );
+    },
+    [hospitals]
+  );
+
+  // Get nearest resorts for a clinic (strict distance filter)
   const getNearestResorts = useCallback(
-    (clinic: Clinic, limit = 5, maxMiles = 100, minCount = 3): ResortWithDistance[] => {
-      const withDistance = resorts
+    (clinic: Clinic, limit = 5, maxMiles = 100): ResortWithDistance[] => {
+      return resorts
         .map((r) => ({
           ...r,
           distance: haversine(
@@ -136,27 +188,17 @@ function App() {
             { lat: r.lat, lon: r.lon }
           ),
         }))
-        .sort((a, b) => a.distance - b.distance);
-      
-      // Get items within max distance
-      const withinRange = withDistance.filter((r) => r.distance <= maxMiles);
-      
-      // Ensure at least minCount items (even if beyond maxMiles)
-      if (withinRange.length >= minCount) {
-        return withinRange.slice(0, limit);
-      }
-      
-      // Need to include some beyond range to meet minimum
-      return withDistance.slice(0, Math.max(minCount, Math.min(limit, withinRange.length)));
+        .filter((r) => r.distance <= maxMiles)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, limit);
     },
     [resorts]
   );
 
-  // Get nearest resorts for a hospital
-  // Returns at least minCount items, prioritizing those within maxMiles
+  // Get nearest resorts for a hospital (strict distance filter)
   const getNearestResortsFromHospital = useCallback(
-    (hospital: Hospital, limit = 5, maxMiles = 100, minCount = 3): ResortWithDistance[] => {
-      const withDistance = resorts
+    (hospital: Hospital, limit = 5, maxMiles = 100): ResortWithDistance[] => {
+      return resorts
         .map((r) => ({
           ...r,
           distance: haversine(
@@ -164,18 +206,9 @@ function App() {
             { lat: r.lat, lon: r.lon }
           ),
         }))
-        .sort((a, b) => a.distance - b.distance);
-      
-      // Get items within max distance
-      const withinRange = withDistance.filter((r) => r.distance <= maxMiles);
-      
-      // Ensure at least minCount items (even if beyond maxMiles)
-      if (withinRange.length >= minCount) {
-        return withinRange.slice(0, limit);
-      }
-      
-      // Need to include some beyond range to meet minimum
-      return withDistance.slice(0, Math.max(minCount, Math.min(limit, withinRange.length)));
+        .filter((r) => r.distance <= maxMiles)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, limit);
     },
     [resorts]
   );
@@ -208,10 +241,25 @@ function App() {
       const resort = filtered.resorts.find((r) => r.id === expandedId);
       if (!resort) return null;
       const nearestClinics = getNearestClinics(resort);
+      const nearestHospitals = getNearestHospitals(resort);
       return {
         type: "resort" as const,
         item: resort,
-        relatedItems: nearestClinics,
+        relatedClinics: nearestClinics,
+        relatedHospitals: nearestHospitals,
+        // Combined for bounds fitting and connection lines
+        allRelatedItems: [
+          ...nearestClinics.map((c, i) => ({
+            ...c,
+            itemType: "clinic" as const,
+            rank: i,
+          })),
+          ...nearestHospitals.map((h, i) => ({
+            ...h,
+            itemType: "hospital" as const,
+            rank: i,
+          })),
+        ],
       };
     }
 
@@ -222,7 +270,12 @@ function App() {
       return {
         type: "clinic" as const,
         item: clinic,
-        relatedItems: nearestResorts,
+        relatedResorts: nearestResorts,
+        allRelatedItems: nearestResorts.map((r, i) => ({
+          ...r,
+          itemType: "resort" as const,
+          rank: i,
+        })),
       };
     }
 
@@ -233,21 +286,34 @@ function App() {
       return {
         type: "hospital" as const,
         item: hospital,
-        relatedItems: nearestResorts,
+        relatedResorts: nearestResorts,
+        allRelatedItems: nearestResorts.map((r, i) => ({
+          ...r,
+          itemType: "resort" as const,
+          rank: i,
+        })),
       };
     }
 
     return null;
-  }, [expandedId, mode, filtered, getNearestClinics, getNearestResorts, getNearestResortsFromHospital]);
+  }, [
+    expandedId,
+    mode,
+    filtered,
+    getNearestClinics,
+    getNearestHospitals,
+    getNearestResorts,
+    getNearestResortsFromHospital,
+  ]);
 
   // Fit map bounds to show expanded item and all related items
   useEffect(() => {
     if (!expandedData || !mapRef.current) return;
 
-    const { item, relatedItems } = expandedData;
-    
+    const { item, allRelatedItems } = expandedData;
+
     // If no related items, just fly to the item
-    if (relatedItems.length === 0) {
+    if (allRelatedItems.length === 0) {
       mapRef.current.flyTo([item.lat, item.lon], 10, { duration: 0.5 });
       return;
     }
@@ -255,7 +321,7 @@ function App() {
     // Create bounds that include all points
     const bounds = L.latLngBounds([]);
     bounds.extend([item.lat, item.lon]);
-    relatedItems.forEach((related) => {
+    allRelatedItems.forEach((related) => {
       bounds.extend([related.lat, related.lon]);
     });
 
@@ -302,6 +368,7 @@ function App() {
             resort={resort}
             userDistance={resort.distance}
             nearestClinics={getNearestClinics(resort)}
+            nearestHospitals={getNearestHospitals(resort)}
             onDirectionsClick={handleDirections}
           />
         ));
@@ -377,10 +444,22 @@ function App() {
         {/* Map */}
         <div className="flex-1 relative">
           {/* Connection Legend */}
-          {expandedData && expandedData.relatedItems.length > 0 && (
+          {expandedData && expandedData.allRelatedItems.length > 0 && (
             <ConnectionLegend
-              itemType={expandedData.type === "resort" ? "clinics" : "resorts"}
-              count={expandedData.relatedItems.length}
+              itemType={
+                expandedData.type === "resort" ? "facilities" : "resorts"
+              }
+              count={expandedData.allRelatedItems.length}
+              clinicCount={
+                expandedData.type === "resort"
+                  ? expandedData.relatedClinics?.length
+                  : undefined
+              }
+              hospitalCount={
+                expandedData.type === "resort"
+                  ? expandedData.relatedHospitals?.length
+                  : undefined
+              }
             />
           )}
 
@@ -389,13 +468,17 @@ function App() {
             {userLocation && <UserLocationMarker location={userLocation} />}
 
             {/* Connection Lines (render first so they appear behind markers) */}
-            {expandedData && expandedData.relatedItems.length > 0 && (
+            {expandedData && expandedData.allRelatedItems.length > 0 && (
               <ConnectionLines
-                origin={{ lat: expandedData.item.lat, lon: expandedData.item.lon }}
-                destinations={expandedData.relatedItems.map((item, index) => ({
+                origin={{
+                  lat: expandedData.item.lat,
+                  lon: expandedData.item.lon,
+                }}
+                destinations={expandedData.allRelatedItems.map((item) => ({
                   lat: item.lat,
                   lon: item.lon,
-                  rank: index,
+                  rank: item.rank,
+                  itemType: item.itemType,
                 }))}
                 highlightedIndex={highlightedConnectionIndex}
               />
@@ -416,11 +499,25 @@ function App() {
               ))}
 
             {/* Secondary Clinic Markers (when a resort is expanded) */}
-            {mode === "resorts" && expandedData?.type === "resort" &&
-              expandedData.relatedItems.map((clinic, index) => (
+            {mode === "resorts" &&
+              expandedData?.type === "resort" &&
+              expandedData.relatedClinics &&
+              expandedData.relatedClinics.map((clinic, index) => (
                 <SecondaryClinicMarker
                   key={`secondary-clinic-${clinic.ccn}`}
                   clinic={clinic}
+                  rank={index}
+                />
+              ))}
+
+            {/* Secondary Hospital Markers (when a resort is expanded) */}
+            {mode === "resorts" &&
+              expandedData?.type === "resort" &&
+              expandedData.relatedHospitals &&
+              expandedData.relatedHospitals.map((hospital, index) => (
+                <SecondaryHospitalMarker
+                  key={`secondary-hospital-${hospital.id}`}
+                  hospital={hospital}
                   rank={index}
                 />
               ))}
@@ -440,8 +537,10 @@ function App() {
               ))}
 
             {/* Secondary Resort Markers (when a clinic is expanded) */}
-            {mode === "clinics" && expandedData?.type === "clinic" &&
-              expandedData.relatedItems.map((resort, index) => (
+            {mode === "clinics" &&
+              expandedData?.type === "clinic" &&
+              expandedData.relatedResorts &&
+              expandedData.relatedResorts.map((resort, index) => (
                 <SecondaryResortMarker
                   key={`secondary-resort-${resort.id}`}
                   resort={resort}
@@ -463,8 +562,10 @@ function App() {
               ))}
 
             {/* Secondary Resort Markers (when a hospital is expanded) */}
-            {mode === "hospitals" && expandedData?.type === "hospital" &&
-              expandedData.relatedItems.map((resort, index) => (
+            {mode === "hospitals" &&
+              expandedData?.type === "hospital" &&
+              expandedData.relatedResorts &&
+              expandedData.relatedResorts.map((resort, index) => (
                 <SecondaryResortMarker
                   key={`secondary-resort-${resort.id}`}
                   resort={resort}

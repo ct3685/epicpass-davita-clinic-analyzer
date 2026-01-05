@@ -1,12 +1,14 @@
 import { Polyline } from "react-leaflet";
 
 /**
- * Connection destination with coordinates and rank
+ * Connection destination with coordinates, rank, and optional item type
  */
 interface ConnectionDestination {
   lat: number;
   lon: number;
   rank: number;
+  /** Item type for color coding (clinic=cyan, hospital=red, resort=green) */
+  itemType?: "clinic" | "hospital" | "resort";
 }
 
 interface ConnectionLinesProps {
@@ -19,12 +21,32 @@ interface ConnectionLinesProps {
 }
 
 /**
- * Get line style based on rank
- * - Rank 0 (nearest): Green, solid, thick
- * - Rank 1-2: Blue, solid, medium
- * - Rank 3+: Gray, dashed, thin
+ * Get line color based on item type
  */
-function getLineStyle(rank: number, isHighlighted: boolean) {
+function getItemColor(itemType?: "clinic" | "hospital" | "resort") {
+  switch (itemType) {
+    case "clinic":
+      return "#22d3ee"; // Cyan for clinics
+    case "hospital":
+      return "#f87171"; // Red for hospitals
+    case "resort":
+      return "#4ade80"; // Green for resorts
+    default:
+      return "#4ade80"; // Default green
+  }
+}
+
+/**
+ * Get line style based on rank and item type
+ * - Rank 0 (nearest): Full opacity, thick
+ * - Rank 1-2: Medium opacity
+ * - Rank 3+: Light opacity, dashed
+ */
+function getLineStyle(
+  rank: number,
+  isHighlighted: boolean,
+  itemType?: "clinic" | "hospital" | "resort"
+) {
   if (isHighlighted) {
     return {
       color: "#fbbf24", // Yellow/amber for highlighted
@@ -34,9 +56,11 @@ function getLineStyle(rank: number, isHighlighted: boolean) {
     };
   }
 
+  const baseColor = getItemColor(itemType);
+
   if (rank === 0) {
     return {
-      color: "#4ade80", // Green
+      color: baseColor,
       weight: 3,
       opacity: 0.9,
       dashArray: undefined,
@@ -45,7 +69,7 @@ function getLineStyle(rank: number, isHighlighted: boolean) {
 
   if (rank < 3) {
     return {
-      color: "#60a5fa", // Blue
+      color: baseColor,
       weight: 2,
       opacity: 0.6,
       dashArray: undefined,
@@ -53,16 +77,16 @@ function getLineStyle(rank: number, isHighlighted: boolean) {
   }
 
   return {
-    color: "#6b7280", // Gray
+    color: baseColor,
     weight: 2,
-    opacity: 0.5,
+    opacity: 0.4,
     dashArray: "6,6",
   };
 }
 
 /**
  * Renders polylines connecting an origin point to multiple destinations.
- * Lines are color-coded by rank (distance order).
+ * Lines are color-coded by item type and rank.
  */
 export function ConnectionLines({
   origin,
@@ -75,11 +99,11 @@ export function ConnectionLines({
     <>
       {destinations.map((dest, index) => {
         const isHighlighted = index === highlightedIndex;
-        const style = getLineStyle(dest.rank, isHighlighted);
+        const style = getLineStyle(dest.rank, isHighlighted, dest.itemType);
 
         return (
           <Polyline
-            key={`connection-${index}`}
+            key={`connection-${dest.itemType || "item"}-${index}`}
             positions={[
               [origin.lat, origin.lon],
               [dest.lat, dest.lon],
@@ -98,4 +122,3 @@ export function ConnectionLines({
     </>
   );
 }
-
