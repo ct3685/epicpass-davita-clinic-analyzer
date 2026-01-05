@@ -267,7 +267,7 @@ describe("nearestLocations", () => {
         lat: 64.8378, // Alaska
         lon: -147.7164,
         passNetwork: "independent",
-        region: "alaska",
+        region: "west",
       };
 
       const nearResort: Resort = {
@@ -426,7 +426,7 @@ describe("nearestLocations", () => {
         lat: 64.0, // Alaska - far from everything
         lon: -150.0,
         passNetwork: "independent",
-        region: "alaska",
+        region: "west",
       };
 
       const clinicResult = getNearestClinics(remoteResort, mockClinics, {
