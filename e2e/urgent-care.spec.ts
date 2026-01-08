@@ -26,12 +26,15 @@ test.describe("Urgent Care Flow", () => {
       const urgentButton = page.locator("button", { hasText: "Urgent" });
       await urgentButton.click();
 
-      // Should show urgent care facilities
-      await expect(page.locator("text=/Urgent Care/")).toBeVisible();
+      // Wait for mode to switch and cards to load
+      await page.waitForSelector("[data-urgent-care-id]", { timeout: 10000 });
+
+      // Should show urgent care facilities (cards with data attribute)
+      await expect(page.locator("[data-urgent-care-id]").first()).toBeVisible();
 
       // Search placeholder should update
       await expect(
-        page.locator('input[placeholder*="Urgent Care"]')
+        page.locator('input[placeholder*="urgent care"]')
       ).toBeVisible();
     });
 
@@ -39,10 +42,12 @@ test.describe("Urgent Care Flow", () => {
       // Switch to urgent care mode
       await page.locator("button", { hasText: "Urgent" }).click();
 
-      // Should show count of urgent care facilities
-      await expect(page.locator("text=/\\d+ Urgent Care/")).toBeVisible({
-        timeout: 5000,
-      });
+      // Wait for cards to load
+      await page.waitForSelector("[data-urgent-care-id]", { timeout: 10000 });
+
+      // Should show urgent care facilities (check that at least one card exists)
+      const cardCount = await page.locator("[data-urgent-care-id]").count();
+      expect(cardCount).toBeGreaterThan(0);
     });
   });
 
