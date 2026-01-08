@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useRef, useMemo } from "react";
+import { useEffect, useCallback, useRef, useMemo, useState } from "react";
 import L from "leaflet";
 import type { Map as LeafletMap } from "leaflet";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -42,6 +42,25 @@ function App() {
   const { userLocation } = useLocationStore();
   const mapRef = useRef<LeafletMap | null>(null);
   const prevExpandedIdRef = useRef<string | null>(null);
+
+  // Sidebar pagination - load more items progressively
+  // Track pages loaded per mode to auto-reset when mode changes
+  const ITEMS_PER_PAGE = 50;
+  const [pagesLoaded, setPagesLoaded] = useState<Record<string, number>>({
+    resorts: 1,
+    clinics: 1,
+    hospitals: 1,
+    urgent_care: 1,
+  });
+
+  const visibleCount = (pagesLoaded[mode] || 1) * ITEMS_PER_PAGE;
+
+  const handleLoadMore = useCallback(() => {
+    setPagesLoaded((prev) => ({
+      ...prev,
+      [mode]: (prev[mode] || 1) + 1,
+    }));
+  }, [mode]);
 
   // Load data
   const { resorts, clinics, hospitals, urgentCare, isLoading, error } = useData();
@@ -252,6 +271,25 @@ function App() {
     });
   }, [expandedId, expandedData]);
 
+  // Get current total count for the active mode
+  const currentTotalCount = useMemo(() => {
+    switch (mode) {
+      case "resorts":
+        return filtered.resorts.length;
+      case "clinics":
+        return filtered.clinics.length;
+      case "hospitals":
+        return filtered.hospitals.length;
+      case "urgent_care":
+        return filtered.urgentCare.length;
+      default:
+        return 0;
+    }
+  }, [mode, filtered]);
+
+  // Check if there are more items to load
+  const hasMoreItems = visibleCount < currentTotalCount;
+
   // Render card list based on mode
   const renderCards = () => {
     if (isLoading) {
@@ -271,9 +309,6 @@ function App() {
       );
     }
 
-    // Limit sidebar to 50 items for performance
-    const SIDEBAR_LIMIT = 50;
-
     switch (mode) {
       case "resorts":
         if (filtered.resorts.length === 0) {
@@ -284,7 +319,7 @@ function App() {
             </div>
           );
         }
-        return filtered.resorts.slice(0, SIDEBAR_LIMIT).map((resort) => (
+        return filtered.resorts.slice(0, visibleCount).map((resort) => (
           <ResortCard
             key={resort.id}
             resort={resort}
@@ -304,7 +339,7 @@ function App() {
             </div>
           );
         }
-        return filtered.clinics.slice(0, SIDEBAR_LIMIT).map((clinic) => (
+        return filtered.clinics.slice(0, visibleCount).map((clinic) => (
           <ClinicCard
             key={clinic.ccn}
             clinic={clinic}
@@ -323,7 +358,7 @@ function App() {
             </div>
           );
         }
-        return filtered.hospitals.slice(0, SIDEBAR_LIMIT).map((hospital) => (
+        return filtered.hospitals.slice(0, visibleCount).map((hospital) => (
           <HospitalCard
             key={hospital.id}
             hospital={hospital}
@@ -342,7 +377,7 @@ function App() {
             </div>
           );
         }
-        return filtered.urgentCare.slice(0, SIDEBAR_LIMIT).map((facility) => (
+        return filtered.urgentCare.slice(0, visibleCount).map((facility) => (
           <UrgentCareCard
             key={facility.id}
             facility={facility}
@@ -376,28 +411,22 @@ function App() {
         {/* Sidebar */}
         <Sidebar
           states={states}
-          totalCount={
-            mode === "resorts"
-              ? filtered.resorts.length
-              : mode === "clinics"
-              ? filtered.clinics.length
-              : mode === "hospitals"
-              ? filtered.hospitals.length
-              : filtered.urgentCare.length
-          }
-          displayedCount={Math.min(
-            50,
-            mode === "resorts"
-              ? filtered.resorts.length
-              : mode === "clinics"
-              ? filtered.clinics.length
-              : mode === "hospitals"
-              ? filtered.hospitals.length
-              : filtered.urgentCare.length
-          )}
+          totalCount={currentTotalCount}
+          displayedCount={Math.min(visibleCount, currentTotalCount)}
           sortOrigin={filtered.sortOrigin}
         >
-          <div className="space-y-3">{renderCards()}</div>
+          <div className="space-y-3">
+            {renderCards()}
+            {/* Load More Button */}
+            {hasMoreItems && !isLoading && (
+              <button
+                onClick={handleLoadMore}
+                className="w-full py-3 px-4 mt-2 rounded-lg bg-bg-tertiary hover:bg-bg-card border border-border hover:border-accent-primary/50 text-text-secondary hover:text-text-primary transition-all duration-200 text-sm font-medium"
+              >
+                Load More ({Math.min(ITEMS_PER_PAGE, currentTotalCount - visibleCount)} more)
+              </button>
+            )}
+          </div>
         </Sidebar>
 
         {/* Map */}
