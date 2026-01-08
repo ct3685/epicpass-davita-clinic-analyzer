@@ -23,13 +23,15 @@ function formatModeLabel(mode: string): string {
 interface SidebarProps {
   states: string[];
   children: React.ReactNode;
-  /** Number of items currently shown */
-  itemCount?: number;
+  /** Number of items currently displayed in sidebar */
+  displayedCount?: number;
+  /** Total number of items matching filters */
+  totalCount?: number;
   /** Current sort origin info */
   sortOrigin?: { type: "user" | "map"; coords: Coordinates } | null;
 }
 
-export function Sidebar({ states, children, itemCount, sortOrigin }: SidebarProps) {
+export function Sidebar({ states, children, displayedCount, totalCount, sortOrigin }: SidebarProps) {
   const { mode } = useSelectionStore();
   const {
     searchQuery,
@@ -286,11 +288,19 @@ export function Sidebar({ states, children, itemCount, sortOrigin }: SidebarProp
       <div className="px-4 py-2 border-b border-border/50 bg-bg-tertiary/50">
         <div className="flex items-center justify-between text-xs text-text-muted">
           <span>
-            {itemCount !== undefined ? (
-              <>
-                <span className="font-semibold text-text-primary">{itemCount}</span>
-                {" "}{formatModeLabel(mode)} found
-              </>
+            {totalCount !== undefined ? (
+              displayedCount !== undefined && displayedCount < totalCount ? (
+                <>
+                  Showing <span className="font-semibold text-text-primary">{displayedCount}</span>
+                  {" "}of <span className="font-semibold text-text-primary">{totalCount}</span>
+                  {" "}{formatModeLabel(mode)}
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold text-text-primary">{totalCount}</span>
+                  {" "}{formatModeLabel(mode)} found
+                </>
+              )
             ) : (
               `Loading ${formatModeLabel(mode)}...`
             )}

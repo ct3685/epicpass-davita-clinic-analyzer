@@ -271,6 +271,9 @@ function App() {
       );
     }
 
+    // Limit sidebar to 50 items for performance
+    const SIDEBAR_LIMIT = 50;
+
     switch (mode) {
       case "resorts":
         if (filtered.resorts.length === 0) {
@@ -281,7 +284,7 @@ function App() {
             </div>
           );
         }
-        return filtered.resorts.map((resort) => (
+        return filtered.resorts.slice(0, SIDEBAR_LIMIT).map((resort) => (
           <ResortCard
             key={resort.id}
             resort={resort}
@@ -301,7 +304,7 @@ function App() {
             </div>
           );
         }
-        return filtered.clinics.map((clinic) => (
+        return filtered.clinics.slice(0, SIDEBAR_LIMIT).map((clinic) => (
           <ClinicCard
             key={clinic.ccn}
             clinic={clinic}
@@ -320,7 +323,7 @@ function App() {
             </div>
           );
         }
-        return filtered.hospitals.map((hospital) => (
+        return filtered.hospitals.slice(0, SIDEBAR_LIMIT).map((hospital) => (
           <HospitalCard
             key={hospital.id}
             hospital={hospital}
@@ -339,7 +342,7 @@ function App() {
             </div>
           );
         }
-        return filtered.urgentCare.map((facility) => (
+        return filtered.urgentCare.slice(0, SIDEBAR_LIMIT).map((facility) => (
           <UrgentCareCard
             key={facility.id}
             facility={facility}
@@ -373,7 +376,7 @@ function App() {
         {/* Sidebar */}
         <Sidebar
           states={states}
-          itemCount={
+          totalCount={
             mode === "resorts"
               ? filtered.resorts.length
               : mode === "clinics"
@@ -382,6 +385,16 @@ function App() {
               ? filtered.hospitals.length
               : filtered.urgentCare.length
           }
+          displayedCount={Math.min(
+            50,
+            mode === "resorts"
+              ? filtered.resorts.length
+              : mode === "clinics"
+              ? filtered.clinics.length
+              : mode === "hospitals"
+              ? filtered.hospitals.length
+              : filtered.urgentCare.length
+          )}
           sortOrigin={filtered.sortOrigin}
         >
           <div className="space-y-3">{renderCards()}</div>
