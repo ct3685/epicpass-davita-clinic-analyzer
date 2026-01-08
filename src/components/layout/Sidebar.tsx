@@ -9,6 +9,17 @@ import { EmergencyGuide, EmergencyGuideTrigger } from "@/components/ui/Emergency
 import { trackSearch, trackFilterChange, trackNearMeClick } from "@/utils/analytics";
 import type { Coordinates } from "@/types";
 
+/** Format view mode for display (e.g., "urgent_care" → "Urgent Care") */
+function formatModeLabel(mode: string): string {
+  const labels: Record<string, string> = {
+    resorts: "resorts",
+    clinics: "clinics", 
+    hospitals: "hospitals",
+    urgent_care: "urgent care",
+  };
+  return labels[mode] || mode.replace(/_/g, " ");
+}
+
 interface SidebarProps {
   states: string[];
   children: React.ReactNode;
@@ -143,7 +154,7 @@ export function Sidebar({ states, children, itemCount, sortOrigin }: SidebarProp
             <SearchInput
               value={searchQuery}
               onChange={handleSearchChange}
-              placeholder={`Search ${mode}...`}
+              placeholder={`Search ${formatModeLabel(mode)}...`}
             />
           </div>
           <Button
@@ -278,10 +289,10 @@ export function Sidebar({ states, children, itemCount, sortOrigin }: SidebarProp
             {itemCount !== undefined ? (
               <>
                 <span className="font-semibold text-text-primary">{itemCount}</span>
-                {" "}{mode} found
+                {" "}{formatModeLabel(mode)} found
               </>
             ) : (
-              `Loading ${mode}...`
+              `Loading ${formatModeLabel(mode)}...`
             )}
           </span>
           {sortOrigin && (
