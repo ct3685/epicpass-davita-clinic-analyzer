@@ -19,6 +19,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           className={`
             w-full
             px-4 py-3
+            min-h-[44px]
             ${leftIcon ? "pl-10" : ""}
             bg-bg-tertiary
             border border-border

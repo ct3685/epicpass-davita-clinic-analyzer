@@ -23,10 +23,10 @@
   --bg-card: #2a1f35;
   --border-color: #3d2f4a;
   
-  /* Text */
+  /* Text - WCAG AA contrast ratios */
   --text-primary: #f5f0fa;
-  --text-secondary: #b8a5c8;
-  --text-muted: #7a6888;
+  --text-secondary: #c9b8d9;  /* Increased from #b8a5c8 for better contrast */
+  --text-muted: #9a8aab;      /* Increased from #7a6888 for WCAG AA compliance */
   
   /* Accents */
   --accent-primary: #e879a0;

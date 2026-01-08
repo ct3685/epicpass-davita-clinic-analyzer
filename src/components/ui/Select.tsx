@@ -13,6 +13,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         className={`
           w-full
           px-3 py-2.5
+          min-h-[44px]
           bg-bg-tertiary
           border border-border
           rounded-lg

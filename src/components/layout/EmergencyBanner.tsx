@@ -68,7 +68,7 @@ export function EmergencyBanner() {
 
       {/* Not medical advice disclaimer - shown below main message */}
       <div className="max-w-7xl mx-auto mt-1">
-        <p className="text-xs text-red-200 opacity-80">
+        <p className="text-xs text-white/90">
           This site provides general information only—not medical advice. Always
           consult a healthcare professional.
         </p>

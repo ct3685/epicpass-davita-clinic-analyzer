@@ -61,16 +61,18 @@ export function Header() {
           </div>
         </button>
 
-        {/* Mode Toggle */}
+        {/* Mode Toggle - min 44px touch targets for accessibility */}
         <div className="flex bg-bg-tertiary border border-border rounded-full p-0.5 sm:p-1 gap-0.5 sm:gap-1 overflow-x-auto">
           {modes.map(({ id, label, icon }) => (
             <button
               key={id}
               onClick={() => handleModeChange(id)}
+              aria-label={`Switch to ${label} mode`}
+              aria-pressed={mode === id}
               className={`
-                px-2 sm:px-3 py-1.5 sm:py-2 rounded-full
-                text-xs sm:text-sm font-semibold
-                flex items-center gap-1 sm:gap-1.5
+                min-w-[44px] min-h-[44px] px-2 sm:px-3 py-2 sm:py-2 rounded-full
+                text-sm sm:text-sm font-semibold
+                flex items-center justify-center gap-1 sm:gap-1.5
                 transition-all duration-300
                 whitespace-nowrap flex-shrink-0
                 ${
