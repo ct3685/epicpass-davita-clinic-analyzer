@@ -19,7 +19,7 @@ import {
   UrgentCareClusterGroup,
 } from "@/components/map";
 import { ResortCard, ClinicCard, HospitalCard, UrgentCareCard } from "@/components/cards";
-import { SkeletonCardList, InstallPrompt, SkipLink } from "@/components/ui";
+import { SkeletonCardList, InstallPrompt, SkipLink, EmergencyFab } from "@/components/ui";
 import { useData, useFilteredData } from "@/hooks";
 import {
   getNearestClinics,
@@ -564,6 +564,9 @@ function App() {
 
       {/* PWA Install Prompt */}
       <InstallPrompt />
+
+      {/* Mobile Emergency FAB */}
+      <EmergencyFab />
     </div>
   );
 }

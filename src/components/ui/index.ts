@@ -15,4 +15,6 @@ export * from "./Skeleton";
 export * from "./InstallPrompt";
 export * from "./CallButton";
 export * from "./SkipLink";
+export * from "./EmergencyFab";
+export * from "./FreshnessIndicator";
 
